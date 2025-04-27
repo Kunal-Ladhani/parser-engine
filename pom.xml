@@ -10,10 +10,10 @@
 	</parent>
 	<groupId>com.parser</groupId>
 	<artifactId>engine</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>parser-engine</name>
-	<description>parser engine for romal</description>
-	<url/>
+	<description>property data's parser engine for romal changwani</description>
+	<url />
 	<licenses>
 		<license/>
 	</licenses>
@@ -31,8 +31,19 @@
 	</scm>
 	<properties>
 		<java.version>17</java.version>
-		<aws-java-sdk.version>2.31.15</aws-java-sdk.version>
+		<aws.java.sdk.version>2.31.15</aws.java.sdk.version>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>bom</artifactId>
+				<version>${aws.java.sdk.version}</version>
+				<type>pom</type>
+				<scope>runtime</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -69,36 +80,25 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>bom</artifactId>
-			<version>${aws-java-sdk.version}</version>
-			<type>pom</type>
-			<scope>import</scope>
-		</dependency>
-
+		<!-- AWS SDKs -->
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>s3</artifactId>
-			<version>${aws-java-sdk.version}</version>
-			<scope>compile</scope>
+			<version>${aws.java.sdk.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>secretsmanager</artifactId>
-			<version>${aws-java-sdk.version}</version>
-			<scope>compile</scope>
+			<version>${aws.java.sdk.version}</version>
 		</dependency>
 
-		<!-- full sdk -->
+		<!-- full AWS sdk -->
 <!--		<dependency>-->
 <!--			<groupId>software.amazon.awssdk</groupId>-->
 <!--			<artifactId>aws-sdk-java</artifactId>-->
 <!--			<version>2.31.15</version>-->
 <!--		</dependency>-->
-
-
 	</dependencies>
 
 	<build>
@@ -129,5 +129,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
