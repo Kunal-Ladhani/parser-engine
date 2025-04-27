@@ -1,7 +1,15 @@
 server:
   port: 8080
+  servlet:
+    contextPath: /risk-engine
+  max-http-request-header-size: 10MB
 
 spring:
+  devtools:
+    add-properties: false
+  config:
+    activate:
+      on-profile: dev
   datasource:
     url: jdbc:mysql://127.0.0.1:3306
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,12 +20,30 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
-    #    properties:
-    #      hibernate:
-    #        format_sql: true
+    properties:
+      hibernate:
+        format_sql: true
   sql:
     init:
       mode: always
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
+logging:
+  level:
+    sql: info
+    web: info
+    root: info
+    org:
+      springframework:
+        ws:
+          client:
+            MessageTracing:
+              sent: INFO
+              received: TRACE
+          server:
+            MessageTracing:
+              sent: INFO
+              received: TRACE
+
