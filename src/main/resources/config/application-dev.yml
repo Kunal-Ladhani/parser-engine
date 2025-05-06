@@ -11,21 +11,18 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306
+    url: jdbc:mysql://127.0.0.1:3306/property_db
     driver-class-name: com.mysql.cj.jdbc.Driver
-    name: property_db
     username: root
     password: password
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-  sql:
-    init:
-      mode: always
+    database: mysql
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -47,3 +44,9 @@ logging:
               sent: INFO
               received: TRACE
 
+aws:
+  s3:
+    arn: xyz
+    bucket_name: my-local-bucket
+    secret_key: xyz
+    access_key: abc

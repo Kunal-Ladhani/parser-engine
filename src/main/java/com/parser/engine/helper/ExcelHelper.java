@@ -16,6 +16,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -30,21 +31,20 @@ import static org.apache.poi.ss.usermodel.CellType.STRING;
  * @since v1.0
  */
 
-@UtilityClass
 @Slf4j
+@Component
 public class ExcelHelper {
 
 	public XSSFWorkbook getWorkbookInstance() {
 		return new XSSFWorkbook();
 	}
 
-	public Boolean hasExcelFormat(@NotNull MultipartFile file) {
+	public static Boolean hasExcelFormat(@NotNull MultipartFile file) {
 		if (Constants.EXCEL_SUPPORTED_TYPES.contains(file.getContentType())) {
 			return Boolean.TRUE;
 		}
 		return Boolean.FALSE;
 	}
-
 
 	@SneakyThrows
 	@NotNull

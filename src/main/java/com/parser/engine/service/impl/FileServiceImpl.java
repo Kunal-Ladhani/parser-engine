@@ -1,6 +1,8 @@
 package com.parser.engine.service.impl;
 
+import com.parser.engine.helper.ExcelHelper;
 import com.parser.engine.service.FileService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,31 +15,25 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+@Slf4j
 @Service
 public class FileServiceImpl implements FileService {
 
-//	private final S3Client s3Client;
-//
-//	@Value("${aws.bucket-name}")
-//	private String bucketName;
-//
-//	@Autowired
-//	public FileServiceImpl(S3Client s3Client) {
-//		this.s3Client = s3Client;
-//	}
-//
-//	public String uploadFile(MultipartFile file) throws IOException {
-//		String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-//
-//		PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-//				.bucket(bucketName)
-//				.key(fileName)
-//				.contentType(file.getContentType())
-//				.build();
-//
-//		s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
-//
-//		return fileName;
-//	}
+	private final ExcelHelper excelHelper;
+
+	@Autowired
+	public FileServiceImpl(ExcelHelper excelHelper) {
+		this.excelHelper = excelHelper;
+	}
+
+	@Override
+	public void processExcelFile(MultipartFile file, String fileId) {
+		try {
+
+		} catch(Exception e) {
+
+		}
+
+	}
 
 }

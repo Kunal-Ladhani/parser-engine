@@ -16,6 +16,8 @@ public enum ExceptionCode {
 	F101("F101", "Invalid file type"),
 	F102("F102", "Invalid Upload type"),
 	F103("F103", "Failed to parse this file"),
+	F104("F104", "Failed to upload this file"),
+	F105("F105", "Failed to download this file"),
 
 	N101("N101", "No field modified"),
 	N102("N102", "No %s Input provided"),

@@ -22,10 +22,6 @@ spring:
     serialization:
       write-dates-as-timestamps: false
 
-
-
-
-
 springdoc:
   api-docs:
     enabled: true
