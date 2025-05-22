@@ -9,7 +9,7 @@ spring:
     add-properties: false
   config:
     activate:
-      on-profile: dev
+      on-profile: local
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/property_db
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -28,7 +28,8 @@ spring:
       matching-strategy: ant_path_matcher
   docker:
     compose:
-      enabled: false
+      file: docker-compose.yml
+      enabled: true
 
 logging:
   level:
