@@ -8,11 +8,9 @@ import com.parser.engine.repository.FileRepository;
 import com.parser.engine.service.AwsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.InputStream;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -30,27 +28,23 @@ public class AwsServiceImpl implements AwsService {
 	}
 
 	@Override
-	public File uploadFileAndSave(MultipartFile multipartFile) {
+	public InputStreamResource downloadFile(File file) {
 		try {
-			String awsKey = UUID.randomUUID() + "_" + multipartFile.getOriginalFilename();
-			String fileName = multipartFile.getOriginalFilename();
-			String contentType = multipartFile.getContentType();
-			InputStream inputStream = multipartFile.getInputStream();
-			File file = awsHelper.postToS3(fileName, awsKey, contentType, inputStream);
-			return fileRepository.save(file);
+			return awsHelper.getFromS3(file.getAwsKey());
 		} catch (Exception e) {
-			log.error("Error while uploading and saving file to S3: {}", e.getMessage());
-			throw new AwsS3Exception(ExceptionCode.F104, ExceptionCode.F104.getDefaultMessage());
+			log.error("Error while downloading file from S3: {}", e.getMessage());
+			throw new AwsS3Exception(ExceptionCode.F105, ExceptionCode.F105.getDefaultMessage());
 		}
 	}
 
 	@Override
-	public byte[] downloadFile(String key) {
+	public File uploadFileAndSave(MultipartFile multipartFile) {
 		try {
-			return awsHelper.getFromS3(key);
+			File file = awsHelper.postToS3(multipartFile);
+			return fileRepository.save(file);
 		} catch (Exception e) {
-			log.error("Error while downloading file from S3: {}", e.getMessage());
-			throw new AwsS3Exception(ExceptionCode.F105, ExceptionCode.F105.getDefaultMessage());
+			log.error("Error while uploading and saving file to S3: {}", e.getMessage());
+			throw new AwsS3Exception(ExceptionCode.F104, ExceptionCode.F104.getDefaultMessage());
 		}
 	}
 

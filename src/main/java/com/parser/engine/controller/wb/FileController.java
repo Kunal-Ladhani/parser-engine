@@ -1,18 +1,19 @@
 package com.parser.engine.controller.wb;
 
-import com.parser.engine.common.ExceptionCode;
-import com.parser.engine.exception.InvalidFileTypeException;
-import com.parser.engine.helper.ExcelHelper;
 import com.parser.engine.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/wb/files")
+@RequestMapping("/wb/v1/files")
 public class FileController {
 
 	private final FileService fileService;
@@ -22,13 +23,9 @@ public class FileController {
 		this.fileService = fileService;
 	}
 
-	@PostMapping(value = "{fileId}/process")
-	public ResponseEntity<String> processFile(@PathVariable String fileId, @RequestParam MultipartFile file) {
-		if (ExcelHelper.hasExcelFormat(file)) {
-			fileService.processExcelFile(file, fileId);
-			return ResponseEntity.ok("Uploaded.");
-		} else {
-			throw new InvalidFileTypeException(ExceptionCode.F101, ExceptionCode.F101.getDefaultMessage() + file.getContentType());
-		}
+	@PostMapping(value = "/{fileId}/process")
+	public ResponseEntity<String> processFile(@PathVariable UUID fileId) {
+		fileService.processExcelFile(fileId);
+		return ResponseEntity.ok("Processed.");
 	}
 }

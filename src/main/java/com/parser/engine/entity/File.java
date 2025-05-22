@@ -3,7 +3,8 @@ package com.parser.engine.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -14,8 +15,9 @@ import java.time.ZonedDateTime;
 public class File extends Auditable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(name = "id", updatable = false, nullable = false)
+	private UUID id;
 
 	@Column(name = "file_name")
 	private String fileName;
@@ -29,11 +31,11 @@ public class File extends Auditable {
 	@Column(name = "aws_key", nullable = false)
 	private String awsKey;
 
-	@Column(name = "size")
+	@Column(name = "size_in_bytes")
 	private Long size;
 
-	@Column(name = "asset_id")
-	private String assetId;
+	@Column(name = "etag")
+	private String etag;
 
 	@Column(name = "bucket_name")
 	private String bucketName;
@@ -42,5 +44,5 @@ public class File extends Auditable {
 	private String contentType;
 
 	@Column(name = "uploaded_at")
-	private ZonedDateTime uploadedAt;
+	private Instant uploadedAt;
 }

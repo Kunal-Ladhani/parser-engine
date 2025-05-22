@@ -4,7 +4,9 @@ import com.parser.engine.dto.PreSignedUrlDto;
 import com.parser.engine.entity.File;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -22,8 +24,9 @@ import software.amazon.awssdk.utils.IoUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.Objects;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -41,38 +44,44 @@ public class AwsHelper {
 		this.secretsManagerClient = secretsManagerClient;
 	}
 
-	public File postToS3(String fileName, String awsKey, String contentType, InputStream inputStream) throws IOException {
-		log.info("postToS3 fileName - {}, awsKey {}, contentType {}, bucket {}", fileName, awsKey, contentType, bucketName);
-		File file = null;
+	public File postToS3(MultipartFile multipartFile) throws IOException {
+		String fileName = multipartFile.getOriginalFilename();
+		String awsKey = UUID.randomUUID() + "_" + fileName;
+		String contentType = multipartFile.getContentType();
+		InputStream inputStream = multipartFile.getInputStream();
+		Long size = multipartFile.getSize();
+		log.info("postToS3 fileName: {}, awsKey: {}, contentType: {}, bucket: {}", fileName, awsKey, contentType, bucketName);
 		PutObjectRequest putObjectRequest = PutObjectRequest.builder()
 				.bucket(bucketName)
 				.key(awsKey)
 				.contentType(contentType)
-//				.acl(ObjectCannedACL.PRIVATE)
 				.build();
 		RequestBody requestBody = RequestBody.fromBytes(IoUtils.toByteArray(inputStream));
 		PutObjectResponse result = s3Client.putObject(putObjectRequest, requestBody);
 		if (Objects.nonNull(result)) {
-			file = File.builder()
+			return File.builder()
+					.fileName(fileName)
+					.fileType(contentType)
+					.size(size)
 					.bucketName(bucketName)
-					.assetId(result.eTag())
+					.etag(result.eTag())
 					.contentType(contentType)
 					.s3Key(fileName)
 					.awsKey(awsKey)
-					.uploadedAt(ZonedDateTime.now())
+					.uploadedAt(Instant.now())
 					.build();
 		}
-		return file;
+		return null;
 	}
 
-	public byte[] getFromS3(String key) throws IOException {
+	public InputStreamResource getFromS3(String key) throws IOException {
 		log.info("getFromS3 awsKey: {} bucket: {}", key, bucketName);
 		GetObjectRequest getObjectRequest = GetObjectRequest.builder()
 				.bucket(bucketName)
 				.key(key)
 				.build();
-		ResponseInputStream<GetObjectResponse> object = s3Client.getObject(getObjectRequest);
-		return IoUtils.toByteArray(object);
+		ResponseInputStream<GetObjectResponse> s3ObjectInputStream = s3Client.getObject(getObjectRequest);
+		return new InputStreamResource(s3ObjectInputStream);
 	}
 
 	public PreSignedUrlDto getPreSignedUrl(String key) {

@@ -32,13 +32,12 @@ public class GlobalExceptionHandler {
 	 */
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ExceptionResponseDto> generalExceptionHandler(Exception exp, WebRequest req) {
-		log.error("General Exception occurred.{}", exp.getMessage(), exp);
+		log.error("General Exception occurred: {}", exp.getMessage(), exp);
 		ExceptionResponseDto ExceptionResponseDto = new ExceptionResponseDto();
 		ExceptionResponseDto.setTimestamp(new Date());
 		ExceptionResponseDto.setErrorMessage(exp.getMessage());
 		return new ResponseEntity<>(ExceptionResponseDto, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-
 
 	/**
 	 * Method argument not valid exception handler response entity.
@@ -48,7 +47,7 @@ public class GlobalExceptionHandler {
 	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ExceptionResponseDto> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exp, WebRequest req) {
-		log.error("MethodArgumentNotValidException occurred.{}", exp.getMessage(), exp);
+		log.error("MethodArgumentNotValidException occurred: {}", exp.getMessage(), exp);
 		var allErrors = exp.getBindingResult()
 				.getAllErrors()
 				.stream()
@@ -61,16 +60,9 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(ExceptionResponseDto, HttpStatus.BAD_REQUEST);
 	}
 
-	/**
-	 * Invalid file exception handler response entity.
-	 *
-	 * @param exp the exception
-	 * @param req the web request
-	 * @return the response entity
-	 */
 	@ExceptionHandler({InvalidFileContentException.class, InvalidFileTypeException.class})
 	public ResponseEntity<ExceptionResponseDto> invalidFileExceptionHandler(ServiceException exp, WebRequest req) {
-		log.error("Exception occurred.{}", exp.getMessage(), exp);
+		log.error("Exception occurred: {}", exp.getMessage(), exp);
 		ExceptionResponseDto ExceptionResponseDto = new ExceptionResponseDto();
 		ExceptionResponseDto.setTimestamp(new Date());
 		ExceptionResponseDto.setExceptionCode(exp.getExceptionCode());
@@ -82,12 +74,11 @@ public class GlobalExceptionHandler {
 	 * Resource does not exists exception handler response entity.
 	 *
 	 * @param exp the exception
-	 * @param req the web request
 	 * @return the response entity
 	 */
 	@ExceptionHandler(ResourceDoesNotExistsException.class)
 	public ResponseEntity<ExceptionResponseDto> resourceDoesNotExistsExceptionHandler(ResourceDoesNotExistsException exp, WebRequest req) {
-		log.error("ResourceDoesNotExistsException occurred.{}", exp.getMessage(), exp);
+		log.error("ResourceDoesNotExistsException occurred: {}", exp.getMessage(), exp);
 		ExceptionResponseDto ExceptionResponseDto = new ExceptionResponseDto();
 		ExceptionResponseDto.setTimestamp(new Date());
 		ExceptionResponseDto.setExceptionCode(exp.getExceptionCode());
@@ -99,16 +90,14 @@ public class GlobalExceptionHandler {
 	 * service exception handler response entity.
 	 *
 	 * @param exp the exception
-	 * @param req the web request
 	 * @return the response entity
 	 */
 	@ExceptionHandler({ServiceException.class,
 			ResourceAlreadyExistsException.class,
-			ValidationException.class,
 			OperationNotAllowedException.class
 	})
 	public ResponseEntity<ExceptionResponseDto> serviceExceptionHandler(ServiceException exp, WebRequest req) {
-		log.error("ServiceException occurred.{}", exp.getMessage(), exp);
+		log.error("Exception occurred: {}", exp.getMessage(), exp);
 		ExceptionResponseDto ExceptionResponseDto = new ExceptionResponseDto();
 		ExceptionResponseDto.setTimestamp(new Date());
 		ExceptionResponseDto.setExceptionCode(exp.getExceptionCode());
@@ -116,5 +105,14 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(ExceptionResponseDto, HttpStatus.BAD_REQUEST);
 	}
 
+	@ExceptionHandler(ValidationException.class)
+	public ResponseEntity<ExceptionResponseDto> validationExceptionHandler(ValidationException exp, WebRequest req) {
+		log.error("ValidationException occurred: {}", exp.getMessage(), exp);
+		ExceptionResponseDto ExceptionResponseDto = new ExceptionResponseDto();
+		ExceptionResponseDto.setTimestamp(new Date());
+		ExceptionResponseDto.setExceptionCode(exp.getExceptionCode());
+		ExceptionResponseDto.setErrorMessage(exp.getMessage());
+		return new ResponseEntity<>(ExceptionResponseDto, HttpStatus.BAD_REQUEST);
+	}
 
 }

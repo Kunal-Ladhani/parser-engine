@@ -1,6 +1,7 @@
 package com.parser.engine;
 
 import com.parser.engine.common.Constants;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,15 +11,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collections;
+import java.util.TimeZone;
 
 @Slf4j
-@EnableJpaAuditing(auditorAwareRef = "auditorProvider")
+@EnableJpaAuditing
 @SpringBootApplication
 public class ParserEngineApplication {
-
-//	public static void main(String[] args) {
-//		SpringApplication.run(ParserEngineApplication.class, args);
-//	}
 
 	public static void main(String[] args) throws UnknownHostException {
 		var app = new SpringApplication(ParserEngineApplication.class);
@@ -30,5 +28,10 @@ public class ParserEngineApplication {
 				env.getProperty("server.port"),
 				InetAddress.getLocalHost().getHostAddress(),
 				env.getProperty("server.port"));
+	}
+
+	@PostConstruct
+	public void started() {
+		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Kolkata"));
 	}
 }

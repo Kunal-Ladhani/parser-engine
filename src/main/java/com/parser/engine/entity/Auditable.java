@@ -10,26 +10,26 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Auditable implements Serializable {
 
 	@CreatedBy
-	@Column(name = "created_by", updatable = false)
+	@Column(name = "created_by", updatable = false, nullable = false)
 	private String createdBy;
 
 	@CreatedDate
-	@Column(name = "created_at", updatable = false)
-	private ZonedDateTime createdAt;
+	@Column(name = "created_at", updatable = false, nullable = false)
+	private LocalDateTime createdAt;
 
 	@LastModifiedBy
-	@Column(name = "last_updated_by")
+	@Column(name = "last_updated_by", nullable = false)
 	private String lastModifiedBy;
 
 	@LastModifiedDate
-	@Column(name = "last_updated_at")
-	private ZonedDateTime lastModifiedAt;
+	@Column(name = "last_updated_at", nullable = false)
+	private LocalDateTime lastModifiedAt;
 
 }

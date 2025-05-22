@@ -1,9 +1,9 @@
 package com.parser.engine.service;
 
-import org.springframework.web.multipart.MultipartFile;
+import java.util.UUID;
 
 public interface FileService {
 
-	void processExcelFile(MultipartFile multipartFile, String fileId);
+	void processExcelFile(UUID fileId);
 
 }

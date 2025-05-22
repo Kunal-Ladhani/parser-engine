@@ -1,11 +1,8 @@
 spring:
-
   application:
     name: parser-engine
-
   profiles:
     active: dev
-
   mvc:
     dispatch-options-request: true
     pathmatch:
@@ -14,8 +11,8 @@ spring:
       date: dd/MM/yyyy
       date-time: yyyy-MM-dd HH:mm:ss
       time: HH:mm:ss
-
   jackson:
+    time-zone: Asia/Kolkata
     date-format: yyyy-MM-dd'T'HH:mm:ss.SSSZ
     deserialization:
       adjust-dates-to-context-time-zone: false

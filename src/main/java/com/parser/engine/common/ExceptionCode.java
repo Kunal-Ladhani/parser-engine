@@ -18,6 +18,7 @@ public enum ExceptionCode {
 	F103("F103", "Failed to parse this file"),
 	F104("F104", "Failed to upload this file"),
 	F105("F105", "Failed to download this file"),
+	F106("F107", "File metadata not found for fileId: "),
 
 	N101("N101", "No field modified"),
 	N102("N102", "No %s Input provided"),
@@ -30,7 +31,7 @@ public enum ExceptionCode {
 	V101("V101", "Validation exception occurred"),
 	V102("V102", "Invalid %s given"),
 	V103("V103", "Creator Cannot Approve Request"),
-	//V107("V107", "File processing failed."),
+
 
 	U100("U100", "Unknown exception occurred"),
 	U102("U102", "Nothing was modified"),

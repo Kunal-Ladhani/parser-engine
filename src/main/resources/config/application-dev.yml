@@ -1,7 +1,7 @@
 server:
-  port: 8080
+  port: 8081
   servlet:
-    contextPath: /risk-engine
+    contextPath: /parser-engine
   max-http-request-header-size: 10MB
 
 spring:
@@ -17,7 +17,7 @@ spring:
     password: password
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
@@ -46,7 +46,8 @@ logging:
 
 aws:
   s3:
-    arn: xyz
-    bucket_name: my-local-bucket
-    secret_key: xyz
-    access_key: abc
+    arn: ${{ env.AWS_S3_ARN }}
+    bucket_name: ${{ env.S3_BUCKET_NAME }}
+    access_key: ${{ env.ACCESS_KEY }}
+    secret_key: ${{ env.SECRET_KEY }}
+
