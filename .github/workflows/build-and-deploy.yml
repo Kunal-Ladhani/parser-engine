@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Build and Deploy Pipeline
 
 on:
   push:
@@ -30,22 +30,22 @@ jobs:
       # Store the build artifacts for potential use in the deploy job
       - name: Upload build artifacts
         if: github.ref == 'refs/heads/master'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: target/
           retention-days: 1
-  
+
   deploy:
     needs: build
-    if: github.ref == 'refs/heads/master'  # Only run for master branch
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: target/
