@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -61,8 +60,6 @@ public class FileServiceImpl implements FileService {
 			log.info("extracted by headers data: {}", propertyExcelDtoList);
 
 			propertyDao.savePropertyData(propertyExcelDtoList);
-
-			ArrayList
 
 			// mapstruct-based
 			// List<PropertyExcelDto> excelData = excelHelper.extractDataFromExcelWithMapStruct(inputStream);
