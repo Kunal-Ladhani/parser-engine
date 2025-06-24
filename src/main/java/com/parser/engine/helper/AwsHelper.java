@@ -3,6 +3,8 @@ package com.parser.engine.helper;
 import com.parser.engine.dto.PreSignedUrlDto;
 import com.parser.engine.entity.File;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Component;
@@ -17,8 +19,6 @@ import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
-import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
-import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
 import software.amazon.awssdk.utils.IoUtils;
 
 import java.io.IOException;
@@ -32,33 +32,33 @@ import java.util.UUID;
 @Component
 public class AwsHelper {
 
-	private final S3Client s3Client;
-	private final SecretsManagerClient secretsManagerClient;
+	@Autowired
+	@Qualifier("localS3Client")
+	private S3Client s3Client;
+
+//	private SecretsManagerClient secretsManagerClient;
 
 	@Value("${aws.s3.bucket_name}")
 	private String bucketName;
 
-	public AwsHelper(S3Client s3Client,
-					 SecretsManagerClient secretsManagerClient) {
-		this.s3Client = s3Client;
-		this.secretsManagerClient = secretsManagerClient;
-	}
-
 	public File postToS3(MultipartFile multipartFile) throws IOException {
-		String fileName = multipartFile.getOriginalFilename();
-		String awsKey = UUID.randomUUID() + "_" + fileName;
-		String contentType = multipartFile.getContentType();
-		InputStream inputStream = multipartFile.getInputStream();
-		Long size = multipartFile.getSize();
-		log.info("postToS3 fileName: {}, awsKey: {}, contentType: {}, bucket: {}", fileName, awsKey, contentType, bucketName);
-		PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-				.bucket(bucketName)
-				.key(awsKey)
-				.contentType(contentType)
-				.build();
-		RequestBody requestBody = RequestBody.fromBytes(IoUtils.toByteArray(inputStream));
-		PutObjectResponse result = s3Client.putObject(putObjectRequest, requestBody);
-		if (Objects.nonNull(result)) {
+		try {
+			String fileName = multipartFile.getOriginalFilename();
+			if (Objects.isNull(fileName)) {
+				throw new RuntimeException("file name empty");
+			}
+			String awsKey = UUID.randomUUID().toString().concat("-").concat(fileName);
+			String contentType = multipartFile.getContentType();
+			InputStream inputStream = multipartFile.getInputStream();
+			Long size = multipartFile.getSize();
+			log.info("postToS3 fileName: {}, awsKey: {}, contentType: {}, bucket: {}", fileName, awsKey, contentType, bucketName);
+			PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+					.bucket(bucketName)
+					.key(awsKey)
+					.contentType(contentType)
+					.build();
+			RequestBody requestBody = RequestBody.fromBytes(IoUtils.toByteArray(inputStream));
+			PutObjectResponse result = s3Client.putObject(putObjectRequest, requestBody);
 			return File.builder()
 					.fileName(fileName)
 					.fileType(contentType)
@@ -70,8 +70,10 @@ public class AwsHelper {
 					.awsKey(awsKey)
 					.uploadedAt(Instant.now())
 					.build();
+		} catch (Exception e) {
+			log.error("Exception: {}", e.getMessage(), e);
+			throw e;
 		}
-		return null;
 	}
 
 	public InputStreamResource getFromS3(String key) throws IOException {
@@ -106,23 +108,23 @@ public class AwsHelper {
 		return new PreSignedUrlDto(preSignedUrl);
 	}
 
-	public String getSecretForAws(String arn) {
-		log.info("AWS Secret calling.... for arn {}", arn);
-		try {
-			var getSecretValueRequest = GetSecretValueRequest.builder()
-					.secretId(arn)
-					.build();
-
-			var secretValueResult = secretsManagerClient.getSecretValue(getSecretValueRequest);
-			log.info("secretValueResult is {}", secretValueResult);
-			if (secretValueResult != null) {
-				log.info("secretValueResult string {}", secretValueResult.secretString());
-				return secretValueResult.secretString();
-			}
-		} catch (Exception e) {
-			log.error("exception occurred while fetching secrets : ", e);
-		}
-		return null;
-	}
+//	public String getSecretFromAws(String arn) {
+//		log.info("AWS Secret calling.... for arn {}", arn);
+//		try {
+//			var getSecretValueRequest = GetSecretValueRequest.builder()
+//					.secretId(arn)
+//					.build();
+//
+//			var secretValueResult = secretsManagerClient.getSecretValue(getSecretValueRequest);
+//			log.info("secretValueResult is {}", secretValueResult);
+//			if (secretValueResult != null) {
+//				log.info("secretValueResult string {}", secretValueResult.secretString());
+//				return secretValueResult.secretString();
+//			}
+//		} catch (Exception e) {
+//			log.error("exception occurred while fetching secrets : ", e);
+//		}
+//		return null;
+//	}
 
 }

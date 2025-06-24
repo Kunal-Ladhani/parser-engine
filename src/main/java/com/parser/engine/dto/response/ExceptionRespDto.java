@@ -7,14 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
-/**
- * @author Kunal Ladhani
- * @since v1.0
- */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class ExceptionResponseDto {
+@AllArgsConstructor
+public class ExceptionRespDto {
 
 	private Date timestamp;
 	private ExceptionCode exceptionCode;
