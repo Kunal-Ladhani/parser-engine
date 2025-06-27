@@ -1,5 +1,6 @@
 package com.parser.engine.config;
 
+import com.parser.engine.common.Constants;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
@@ -25,10 +26,10 @@ public class SwaggerConfig {
 								.url("https://kunal-ladhani.github.io")))
 				.servers(List.of(new Server()
 								.url("http://localhost:8080")
-								.description("local"),
+								.description(Constants.SpringProfile.DEV),
 						new Server()
 								.url("http://localhost:8081")
-								.description("live"))
+								.description(Constants.SpringProfile.PROD))
 				)
 				;
 	}

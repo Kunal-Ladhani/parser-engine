@@ -26,12 +26,13 @@ public enum ExceptionCode {
 
 	O101("O101", "Operation not allowed"),
 
+	P101("P101", "Error while searching for property"),
+
 	S102("S102", "Service temporarily unavailable"),
 
 	V101("V101", "Validation exception occurred"),
 	V102("V102", "Invalid %s given"),
 	V103("V103", "Creator Cannot Approve Request"),
-
 
 	U100("U100", "Unknown exception occurred"),
 	U102("U102", "Nothing was modified"),

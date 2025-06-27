@@ -1,20 +1,15 @@
-server:
-  port: 8081
-  servlet:
-    contextPath: /parser-engine
-  max-http-request-header-size: 10MB
-
 spring:
   devtools:
     add-properties: false
   config:
     activate:
-      on-profile: local
+      on-profile: prod
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/property_db
+    url: ${{ env.MYSQL_URL }}
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: password
+    name: property_db
   jpa:
     hibernate:
       ddl-auto: create
@@ -30,23 +25,6 @@ spring:
     compose:
       file: docker-compose.yml
       enabled: true
-
-logging:
-  level:
-    sql: info
-    web: info
-    root: info
-    org:
-      springframework:
-        ws:
-          client:
-            MessageTracing:
-              sent: INFO
-              received: TRACE
-          server:
-            MessageTracing:
-              sent: INFO
-              received: TRACE
 
 aws:
   s3:

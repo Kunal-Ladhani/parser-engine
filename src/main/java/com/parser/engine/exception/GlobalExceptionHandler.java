@@ -1,7 +1,7 @@
 package com.parser.engine.exception;
 
 import com.parser.engine.common.ExceptionCode;
-import com.parser.engine.dto.response.ExceptionResponseDto;
+import com.parser.engine.dto.response.ExceptionRespDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -31,12 +31,12 @@ public class GlobalExceptionHandler {
 	 * @return the response entity
 	 */
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ExceptionResponseDto> generalExceptionHandler(Exception exp, WebRequest req) {
+	public ResponseEntity<ExceptionRespDto> generalExceptionHandler(Exception exp, WebRequest req) {
 		log.error("General Exception occurred: {}", exp.getMessage(), exp);
-		ExceptionResponseDto ExceptionResponseDto = new ExceptionResponseDto();
-		ExceptionResponseDto.setTimestamp(new Date());
-		ExceptionResponseDto.setErrorMessage(exp.getMessage());
-		return new ResponseEntity<>(ExceptionResponseDto, HttpStatus.INTERNAL_SERVER_ERROR);
+		ExceptionRespDto ExceptionRespDto = new ExceptionRespDto();
+		ExceptionRespDto.setTimestamp(new Date());
+		ExceptionRespDto.setErrorMessage(exp.getMessage());
+		return new ResponseEntity<>(ExceptionRespDto, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	/**
@@ -46,28 +46,28 @@ public class GlobalExceptionHandler {
 	 * @return the response entity
 	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ExceptionResponseDto> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exp, WebRequest req) {
+	public ResponseEntity<ExceptionRespDto> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exp, WebRequest req) {
 		log.error("MethodArgumentNotValidException occurred: {}", exp.getMessage(), exp);
 		var allErrors = exp.getBindingResult()
 				.getAllErrors()
 				.stream()
 				.map(DefaultMessageSourceResolvable::getDefaultMessage)
 				.toList();
-		ExceptionResponseDto ExceptionResponseDto = new ExceptionResponseDto();
-		ExceptionResponseDto.setTimestamp(new Date());
-		ExceptionResponseDto.setExceptionCode(ExceptionCode.V101);
-		ExceptionResponseDto.setErrorMessage(allErrors.toString());
-		return new ResponseEntity<>(ExceptionResponseDto, HttpStatus.BAD_REQUEST);
+		ExceptionRespDto ExceptionRespDto = new ExceptionRespDto();
+		ExceptionRespDto.setTimestamp(new Date());
+		ExceptionRespDto.setExceptionCode(ExceptionCode.V101);
+		ExceptionRespDto.setErrorMessage(allErrors.toString());
+		return new ResponseEntity<>(ExceptionRespDto, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler({InvalidFileContentException.class, InvalidFileTypeException.class})
-	public ResponseEntity<ExceptionResponseDto> invalidFileExceptionHandler(ServiceException exp, WebRequest req) {
+	public ResponseEntity<ExceptionRespDto> invalidFileExceptionHandler(ServiceException exp, WebRequest req) {
 		log.error("Exception occurred: {}", exp.getMessage(), exp);
-		ExceptionResponseDto ExceptionResponseDto = new ExceptionResponseDto();
-		ExceptionResponseDto.setTimestamp(new Date());
-		ExceptionResponseDto.setExceptionCode(exp.getExceptionCode());
-		ExceptionResponseDto.setErrorMessage(exp.getMessage());
-		return new ResponseEntity<>(ExceptionResponseDto, HttpStatus.NOT_ACCEPTABLE);
+		ExceptionRespDto ExceptionRespDto = new ExceptionRespDto();
+		ExceptionRespDto.setTimestamp(new Date());
+		ExceptionRespDto.setExceptionCode(exp.getExceptionCode());
+		ExceptionRespDto.setErrorMessage(exp.getMessage());
+		return new ResponseEntity<>(ExceptionRespDto, HttpStatus.NOT_ACCEPTABLE);
 	}
 
 	/**
@@ -77,13 +77,13 @@ public class GlobalExceptionHandler {
 	 * @return the response entity
 	 */
 	@ExceptionHandler(ResourceDoesNotExistsException.class)
-	public ResponseEntity<ExceptionResponseDto> resourceDoesNotExistsExceptionHandler(ResourceDoesNotExistsException exp, WebRequest req) {
+	public ResponseEntity<ExceptionRespDto> resourceDoesNotExistsExceptionHandler(ResourceDoesNotExistsException exp, WebRequest req) {
 		log.error("ResourceDoesNotExistsException occurred: {}", exp.getMessage(), exp);
-		ExceptionResponseDto ExceptionResponseDto = new ExceptionResponseDto();
-		ExceptionResponseDto.setTimestamp(new Date());
-		ExceptionResponseDto.setExceptionCode(exp.getExceptionCode());
-		ExceptionResponseDto.setErrorMessage(exp.getMessage());
-		return new ResponseEntity<>(ExceptionResponseDto, HttpStatus.NOT_FOUND);
+		ExceptionRespDto ExceptionRespDto = new ExceptionRespDto();
+		ExceptionRespDto.setTimestamp(new Date());
+		ExceptionRespDto.setExceptionCode(exp.getExceptionCode());
+		ExceptionRespDto.setErrorMessage(exp.getMessage());
+		return new ResponseEntity<>(ExceptionRespDto, HttpStatus.NOT_FOUND);
 	}
 
 	/**
@@ -96,23 +96,23 @@ public class GlobalExceptionHandler {
 			ResourceAlreadyExistsException.class,
 			OperationNotAllowedException.class
 	})
-	public ResponseEntity<ExceptionResponseDto> serviceExceptionHandler(ServiceException exp, WebRequest req) {
+	public ResponseEntity<ExceptionRespDto> serviceExceptionHandler(ServiceException exp, WebRequest req) {
 		log.error("Exception occurred: {}", exp.getMessage(), exp);
-		ExceptionResponseDto ExceptionResponseDto = new ExceptionResponseDto();
-		ExceptionResponseDto.setTimestamp(new Date());
-		ExceptionResponseDto.setExceptionCode(exp.getExceptionCode());
-		ExceptionResponseDto.setErrorMessage(exp.getMessage());
-		return new ResponseEntity<>(ExceptionResponseDto, HttpStatus.BAD_REQUEST);
+		ExceptionRespDto ExceptionRespDto = new ExceptionRespDto();
+		ExceptionRespDto.setTimestamp(new Date());
+		ExceptionRespDto.setExceptionCode(exp.getExceptionCode());
+		ExceptionRespDto.setErrorMessage(exp.getMessage());
+		return new ResponseEntity<>(ExceptionRespDto, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(ValidationException.class)
-	public ResponseEntity<ExceptionResponseDto> validationExceptionHandler(ValidationException exp, WebRequest req) {
+	public ResponseEntity<ExceptionRespDto> validationExceptionHandler(ValidationException exp, WebRequest req) {
 		log.error("ValidationException occurred: {}", exp.getMessage(), exp);
-		ExceptionResponseDto ExceptionResponseDto = new ExceptionResponseDto();
-		ExceptionResponseDto.setTimestamp(new Date());
-		ExceptionResponseDto.setExceptionCode(exp.getExceptionCode());
-		ExceptionResponseDto.setErrorMessage(exp.getMessage());
-		return new ResponseEntity<>(ExceptionResponseDto, HttpStatus.BAD_REQUEST);
+		ExceptionRespDto ExceptionRespDto = new ExceptionRespDto();
+		ExceptionRespDto.setTimestamp(new Date());
+		ExceptionRespDto.setExceptionCode(exp.getExceptionCode());
+		ExceptionRespDto.setErrorMessage(exp.getMessage());
+		return new ResponseEntity<>(ExceptionRespDto, HttpStatus.BAD_REQUEST);
 	}
 
 }

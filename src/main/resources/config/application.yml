@@ -1,3 +1,12 @@
+server:
+  port: 8080
+  servlet:
+    contextPath: /parser-engine
+    application-display-name: parser-engine
+    encoding:
+      charset: UTF-8
+  max-http-request-header-size: 10MB
+
 spring:
   application:
     name: parser-engine
@@ -25,3 +34,22 @@ springdoc:
   swagger-ui:
     enabled: true
 
+logging:
+  level:
+    sql: info
+    web: info
+    root: info
+    org:
+      springframework:
+        ws:
+          client:
+            MessageTracing:
+              sent: INFO
+              received: TRACE
+          server:
+            MessageTracing:
+              sent: INFO
+              received: TRACE
+    software:
+      amazon:
+        awssdk: DEBUG
