@@ -17,28 +17,28 @@ import org.springframework.stereotype.Service;
 @Service
 public class PropertyServiceImpl implements PropertyService {
 
-	private final PropertyDao propertyDao;
+    private final PropertyDao propertyDao;
 
-	@Autowired
-	public PropertyServiceImpl(PropertyDao propertyDao) {
-		this.propertyDao = propertyDao;
-	}
+    @Autowired
+    public PropertyServiceImpl(PropertyDao propertyDao) {
+        this.propertyDao = propertyDao;
+    }
 
-	@Override
-	public Page<PropertyDetailsRespDto> getPropertyDetails(PropertySearchFilter propertySearchFilter, Pageable pageable) {
-		try {
-			log.info("Fetching property details with the filter: {}", propertySearchFilter.toString());
-			if (!propertySearchFilter.isAtleastOneFilterPresent()) {
-				throw new ValidationException(ExceptionCode.V101, "No filter parameter present.");
-			}
+    @Override
+    public Page<PropertyDetailsRespDto> getPropertyDetails(PropertySearchFilter propertySearchFilter, Pageable pageable) {
+        try {
+            log.info("Fetching property details with the filter: {}", propertySearchFilter.toString());
+            if (!propertySearchFilter.isAtleastOneFilterPresent()) {
+                throw new ValidationException(ExceptionCode.V101, "No filter parameter present.");
+            }
 
-			Page<PropertyDetailsRespDto> propertyDetailsRespDtoPage = propertyDao.getPropertyDetailsPageByFilter(propertySearchFilter, pageable);
-			log.info("Property details page by filter: {}", propertyDetailsRespDtoPage);
+            Page<PropertyDetailsRespDto> propertyDetailsRespDtoPage = propertyDao.getPropertyDetailsPageByFilter(propertySearchFilter, pageable);
+            log.info("Property details page by filter: {}", propertyDetailsRespDtoPage);
 
-			return propertyDetailsRespDtoPage;
-		} catch (Exception e) {
-			log.error("Error occurred while searching for property: {}", e.getMessage());
-			throw new ServiceException(ExceptionCode.P101, ExceptionCode.P101.getDefaultMessage());
-		}
-	}
+            return propertyDetailsRespDtoPage;
+        } catch (Exception e) {
+            log.error("Error occurred while searching for property: {}", e.getMessage());
+            throw new ServiceException(ExceptionCode.P101, ExceptionCode.P101.getDefaultMessage());
+        }
+    }
 }
