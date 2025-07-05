@@ -36,7 +36,7 @@ public class WebController {
 			@RequestParam(required = false) String quotedAmount,
 			@RequestParam(required = false) String carParkingSlots,
 			Pageable pageable) {
-		log.info("Received request to search property.");
+		log.info("Received request to search property with filter");
 		PropertySearchFilter filter = PropertySearchFilter.builder()
 				.numberOfBhk(numberOfBhk)
 				.numberOfRk(numberOfRk)

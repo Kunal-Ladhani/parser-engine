@@ -21,38 +21,38 @@ import java.util.stream.Collectors;
 @Component
 public class PropertyDao {
 
-	private final PropertyMapper propertyMapper;
-	private final PropertyRepository propertyRepository;
+    private final PropertyMapper propertyMapper;
+    private final PropertyRepository propertyRepository;
 
-	@Autowired
-	public PropertyDao(PropertyMapper propertyMapper, PropertyRepository propertyRepository) {
-		this.propertyMapper = propertyMapper;
-		this.propertyRepository = propertyRepository;
-	}
+    @Autowired
+    public PropertyDao(PropertyMapper propertyMapper, PropertyRepository propertyRepository) {
+        this.propertyMapper = propertyMapper;
+        this.propertyRepository = propertyRepository;
+    }
 
-	public void savePropertyData(List<PropertyExcelDto> propertyExcelDtoList) {
-		log.info("saving properties data: {}", propertyExcelDtoList);
-		List<Property> entities = propertyExcelDtoList.stream()
-				.map(propertyMapper::toEntity)
-				.collect(Collectors.toList());
-		log.info("List of property entities: {}", entities);
-		propertyRepository.saveAll(entities);
-	}
+    public void savePropertyData(List<PropertyExcelDto> propertyExcelDtoList) {
+        log.info("saving properties data: {}", propertyExcelDtoList);
+        List<Property> entities = propertyExcelDtoList.stream()
+                .map(propertyMapper::toEntity)
+                .collect(Collectors.toList());
+        log.info("List of property entities: {}", entities);
+        propertyRepository.saveAll(entities);
+    }
 
-	public Page<PropertyDetailsRespDto> getPropertyDetailsPageByFilter(PropertySearchFilter propertySearchFilter, Pageable pageable) {
-		log.info("Searching properties with filter: {}", propertySearchFilter);
+    public Page<PropertyDetailsRespDto> getPropertyDetailsPageByFilter(PropertySearchFilter propertySearchFilter, Pageable pageable) {
+        log.info("Searching properties with filter: {}", propertySearchFilter);
 
-		// Create specification using criteria API
-		Specification<Property> spec = PropertySpecification.withFilters(propertySearchFilter);
+        // Create specification using criteria API
+        Specification<Property> spec = PropertySpecification.withFilters(propertySearchFilter);
 
-		// Execute query with specification
-		Page<Property> propertyPage = propertyRepository.findAll(spec, pageable);
+        // Execute query with specification
+        Page<Property> propertyPage = propertyRepository.findAll(spec, pageable);
 
-		// Convert to DTOs
-		Page<PropertyDetailsRespDto> result = propertyPage.hasContent() ? propertyPage.map(propertyMapper::toResponseDto) : Page.empty(pageable);
+        // Convert to DTOs
+        Page<PropertyDetailsRespDto> result = propertyPage.hasContent() ? propertyPage.map(propertyMapper::toResponseDto) : Page.empty(pageable);
+        log.info("Number of properties matching the filter: {}", result.getTotalElements());
 
-		log.info("Number of properties matching the filter: {}", result.getTotalElements());
-		return result;
-	}
+        return result;
+    }
 
 }

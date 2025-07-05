@@ -8,26 +8,26 @@ import org.springframework.util.StringUtils;
 @Builder
 public class PropertySearchFilter {
 
-	private String numberOfRk;
-	private String numberOfBhk;
-	private String location;
-	private String floor;
-	private String furnishingStatus;
-	private String area;
-	private String quotedAmount;
-	private String carParkingSlots;
+    private String numberOfRk;
+    private String numberOfBhk;
+    private String location;
+    private String floor;
+    private String furnishingStatus;
+    private String area;
+    private String quotedAmount;
+    private String carParkingSlots;
 
-	public boolean isAtleastOneFilterPresent() {
-		String builder = "".concat(numberOfRk)
-				.concat(numberOfBhk)
-				.concat(location)
-				.concat(floor)
-				.concat(furnishingStatus)
-				.concat(area)
-				.concat(quotedAmount)
-				.concat(carParkingSlots);
-		return StringUtils.hasText(builder
-				.replace("null", "")
-				.replace("\\[\\]", ""));
-	}
+    public boolean isAtleastOneFilterPresent() {
+        String builder = numberOfRk
+                + numberOfBhk
+                + location
+                + floor
+                + furnishingStatus
+                + area
+                + quotedAmount
+                + carParkingSlots;
+        return StringUtils.hasText(builder
+                .replace("null", "")
+                .replace("\\[\\]", ""));
+    }
 }
