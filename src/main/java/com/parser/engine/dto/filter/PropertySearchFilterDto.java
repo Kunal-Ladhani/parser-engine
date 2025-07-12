@@ -1,4 +1,4 @@
-package com.parser.engine.dto;
+package com.parser.engine.dto.filter;
 
 import lombok.Builder;
 import lombok.Data;
@@ -6,7 +6,7 @@ import org.springframework.util.StringUtils;
 
 @Data
 @Builder
-public class PropertySearchFilter {
+public class PropertySearchFilterDto {
 
     private String numberOfRk;
     private String numberOfBhk;

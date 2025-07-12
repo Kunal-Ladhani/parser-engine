@@ -19,6 +19,7 @@ public enum ExceptionCode {
 	F104("F104", "Failed to upload this file"),
 	F105("F105", "Failed to download this file"),
 	F106("F107", "File metadata not found for fileId: "),
+	F107("F107", "Error while searching for files"),
 
 	N101("N101", "No field modified"),
 	N102("N102", "No %s Input provided"),

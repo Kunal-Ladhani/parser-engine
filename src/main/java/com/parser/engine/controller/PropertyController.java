@@ -1,6 +1,6 @@
-package com.parser.engine.controller.web;
+package com.parser.engine.controller;
 
-import com.parser.engine.dto.PropertySearchFilter;
+import com.parser.engine.dto.filter.PropertySearchFilterDto;
 import com.parser.engine.dto.response.PropertyDetailsRespDto;
 import com.parser.engine.service.PropertyService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,18 +14,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@RequestMapping("/web")
+@RequestMapping("/wb/v1/properties")
 @RestController
-public class WebController {
+public class PropertyController {
 
 	private final PropertyService propertyService;
 
 	@Autowired
-	public WebController(PropertyService propertyService) {
+	public PropertyController(PropertyService propertyService) {
 		this.propertyService = propertyService;
 	}
 
-	@GetMapping("/v1/properties")
+	@GetMapping
 	public ResponseEntity<Page<PropertyDetailsRespDto>> searchProperty(
 			@RequestParam(required = false) String numberOfBhk,
 			@RequestParam(required = false) String numberOfRk,
@@ -37,7 +37,7 @@ public class WebController {
 			@RequestParam(required = false) String carParkingSlots,
 			Pageable pageable) {
 		log.info("Received request to search property with filter");
-		PropertySearchFilter filter = PropertySearchFilter.builder()
+		PropertySearchFilterDto filter = PropertySearchFilterDto.builder()
 				.numberOfBhk(numberOfBhk)
 				.numberOfRk(numberOfRk)
 				.location(location)

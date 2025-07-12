@@ -1,4 +1,4 @@
-package com.parser.engine.controller.wb;
+package com.parser.engine.controller;
 
 import com.parser.engine.dao.FileDao;
 import com.parser.engine.entity.File;
@@ -36,7 +36,7 @@ public class AwsController {
 		return ResponseEntity.ok(savedFile);
 	}
 
-	@GetMapping("v1/download/{fileId}")
+	@GetMapping("/v1/download/{fileId}")
 	public ResponseEntity<Resource> downloadFile(@PathVariable UUID fileId) {
 		File metadata = fileDao.getFileMetadataById(fileId);
 		InputStreamResource resource = awsService.downloadFile(metadata);

@@ -2,6 +2,7 @@ package com.parser.engine.helper;
 
 import com.parser.engine.dto.PreSignedUrlDto;
 import com.parser.engine.entity.File;
+import com.parser.engine.enums.FileProcessingStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -62,16 +63,18 @@ public class AwsHelper {
 			return File.builder()
 					.fileName(fileName)
 					.fileType(contentType)
-					.size(size)
-					.bucketName(bucketName)
-					.etag(result.eTag())
-					.contentType(contentType)
+					.fileProcessingStatus(FileProcessingStatus.PENDING)
 					.s3Key(fileName)
 					.awsKey(awsKey)
+					.size(size)
+					.etag(result.eTag())
+					.bucketName(bucketName)
+					.contentType(contentType)
 					.uploadedAt(Instant.now())
+					.uploadedBy("kunalladhani@gmail.com")    // TODO: use `SecurityUtils.getLoggedInUserEmailId()`
 					.build();
 		} catch (Exception e) {
-			log.error("Exception: {}", e.getMessage(), e);
+			log.error("Exception occurred when pushing to S3: {}", e.getMessage(), e);
 			throw e;
 		}
 	}
