@@ -5,11 +5,10 @@ import com.parser.engine.dao.FileDao;
 import com.parser.engine.dao.PropertyDao;
 import com.parser.engine.dto.PropertyExcelDto;
 import com.parser.engine.dto.filter.FileSearchFilterDto;
-import com.parser.engine.dto.request.FileDetailsRespDto;
+import com.parser.engine.dto.response.FileDetailsRespDto;
 import com.parser.engine.entity.File;
 import com.parser.engine.exception.InvalidFileTypeException;
 import com.parser.engine.exception.ServiceException;
-import com.parser.engine.exception.ValidationException;
 import com.parser.engine.helper.AwsHelper;
 import com.parser.engine.helper.ExcelHelper;
 import com.parser.engine.service.FileService;
@@ -79,12 +78,9 @@ public class FileServiceImpl implements FileService {
 	public Page<FileDetailsRespDto> getFileDetails(FileSearchFilterDto fileSearchFilterDto, Pageable pageable) {
 		try {
 			log.info("Fetching file details with the filter: {}", fileSearchFilterDto.toString());
-			if (!fileSearchFilterDto.isAtleastOneFilterPresent()) {
-				throw new ValidationException(ExceptionCode.V101, "No filter parameter present.");
-			}
 
 			Page<FileDetailsRespDto> fileDetailsRespDtoPage = fileDao.getFileDetailsPageByFilter(fileSearchFilterDto, pageable);
-			log.info("File details page by filter: {}", fileDetailsRespDtoPage);
+			log.info("File details by filter: {}", fileDetailsRespDtoPage.getContent());
 
 			return fileDetailsRespDtoPage;
 		} catch (Exception e) {

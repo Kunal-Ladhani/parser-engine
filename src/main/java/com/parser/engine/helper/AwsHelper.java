@@ -3,7 +3,9 @@ package com.parser.engine.helper;
 import com.parser.engine.dto.PreSignedUrlDto;
 import com.parser.engine.entity.File;
 import com.parser.engine.enums.FileProcessingStatus;
+import com.parser.engine.enums.FileType;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,8 +63,8 @@ public class AwsHelper {
 			RequestBody requestBody = RequestBody.fromBytes(IoUtils.toByteArray(inputStream));
 			PutObjectResponse result = s3Client.putObject(putObjectRequest, requestBody);
 			return File.builder()
-					.fileName(fileName)
-					.fileType(contentType)
+					.fileName(FilenameUtils.getBaseName(fileName))
+					.fileType(FileType.EXCEL.name())
 					.fileProcessingStatus(FileProcessingStatus.PENDING)
 					.s3Key(fileName)
 					.awsKey(awsKey)

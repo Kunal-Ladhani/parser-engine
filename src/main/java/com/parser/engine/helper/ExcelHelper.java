@@ -128,29 +128,6 @@ public class ExcelHelper {
 			log.info("Field to Header Map: {}", fieldToHeaderMap);
 
 			// Process data rows
-//			for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
-//				Row row = sheet.getRow(rowIndex);
-//				if (row == null) {
-//					break;
-//				}
-//
-//				PropertyExcelDto dto = new PropertyExcelDto();
-//				for (Map.Entry<String, String> entry : fieldToHeaderMap.entrySet()) {
-//					String fieldName = entry.getKey();
-//					String headerName = entry.getValue();
-//					Integer columnIndex = headerToIndexMap.get(headerName);
-//
-//					if (columnIndex != null) {
-//						Cell cell = row.getCell(columnIndex);
-//						if (cell != null) {
-//							setFieldValue(dto, fieldName, cell);
-//						}
-//					}
-//				}
-//				rawData.add(dto);
-//			}
-//
-
 			Iterator<Row> rowIterator = sheet.iterator();
 
 			// Skip header
@@ -215,7 +192,7 @@ public class ExcelHelper {
 				default -> field.set(dto, null);
 			}
 		} catch (Exception e) {
-			log.warn("Failed to set value for field {}: {}", fieldName, e.getMessage());
+			log.warn("Failed to set value for field :: {} error message :: {}", fieldName, e.getMessage());
 		}
 	}
 
@@ -238,7 +215,7 @@ public class ExcelHelper {
 	// ---------------------------------- MAPSTRUCT IMPL ---------------------------------------
 
 	/**
-	 * Extracts data from Excel file using MapStruct for mapping
+	 * Extracts data from an Excel file using MapStruct for mapping
 	 *
 	 * @param inputStream Excel file input stream
 	 * @return List of PropertyExcelDto objects mapped from Excel data

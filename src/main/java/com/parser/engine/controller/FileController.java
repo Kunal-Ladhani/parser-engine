@@ -1,7 +1,7 @@
 package com.parser.engine.controller;
 
 import com.parser.engine.dto.filter.FileSearchFilterDto;
-import com.parser.engine.dto.request.FileDetailsRespDto;
+import com.parser.engine.dto.response.FileDetailsRespDto;
 import com.parser.engine.enums.FileProcessingStatus;
 import com.parser.engine.service.FileService;
 import lombok.extern.slf4j.Slf4j;

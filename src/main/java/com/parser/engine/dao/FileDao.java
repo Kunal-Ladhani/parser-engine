@@ -2,7 +2,7 @@ package com.parser.engine.dao;
 
 import com.parser.engine.common.ExceptionCode;
 import com.parser.engine.dto.filter.FileSearchFilterDto;
-import com.parser.engine.dto.request.FileDetailsRespDto;
+import com.parser.engine.dto.response.FileDetailsRespDto;
 import com.parser.engine.entity.File;
 import com.parser.engine.exception.ResourceDoesNotExistsException;
 import com.parser.engine.mapper.FileMapper;

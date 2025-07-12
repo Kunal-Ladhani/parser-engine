@@ -1,7 +1,7 @@
 package com.parser.engine.service;
 
 import com.parser.engine.dto.filter.FileSearchFilterDto;
-import com.parser.engine.dto.request.FileDetailsRespDto;
+import com.parser.engine.dto.response.FileDetailsRespDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
