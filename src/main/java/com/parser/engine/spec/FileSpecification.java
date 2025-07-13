@@ -26,6 +26,10 @@ public class FileSpecification {
 		return (root, query, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();
 
+			// Always filter out deleted files
+			predicates.add(criteriaBuilder.equal(root.get("isDeleted"), false));
+
+
 			if (StringUtils.hasText(fileName)) {
 				predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("fileName")), "%" + fileName.toLowerCase() + "%"));
 			}

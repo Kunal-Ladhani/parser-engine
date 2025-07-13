@@ -27,7 +27,7 @@ import software.amazon.awssdk.utils.IoUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -72,8 +72,10 @@ public class AwsHelper {
 					.etag(result.eTag())
 					.bucketName(bucketName)
 					.contentType(contentType)
-					.uploadedAt(Instant.now())
+					.uploadedAt(LocalDateTime.now())
 					.uploadedBy("kunalladhani@gmail.com")    // TODO: use `SecurityUtils.getLoggedInUserEmailId()`
+					.isDeleted(false)
+					.isProcessed(false)
 					.build();
 		} catch (Exception e) {
 			log.error("Exception occurred when pushing to S3: {}", e.getMessage(), e);

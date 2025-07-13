@@ -13,4 +13,5 @@ public interface FileService {
 
 	Page<FileDetailsRespDto> getFileDetails(FileSearchFilterDto fileSearchFilterDto, Pageable pageable);
 
+	void softDeleteFile(UUID fileId);
 }

@@ -60,6 +60,12 @@ public class Constants {
 		public static final String CONTENT_TYPE = "content_type";
 		public static final String UPLOADED_AT = "uploaded_at";
 		public static final String UPLOADED_BY = "uploaded_by";
+		public static final String DELETED_AT = "deleted_at";
+		public static final String DELETED_BY = "deleted_by";
+		public static final String IS_DELETED = "is_deleted";
+		public static final String IS_PROCESSED = "is_processed";
+		public static final String PROCESSED_AT = "processed_at";
+		public static final String PROCESSED_BY = "processed_by";
 
 		private FileEntity() {
 		}

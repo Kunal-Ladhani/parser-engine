@@ -9,11 +9,11 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Mapper(componentModel = "spring", imports = {Double.class, Integer.class, ZonedDateTime.class})
+@Mapper(componentModel = "spring", imports = {Double.class, Integer.class, LocalDateTime.class})
 public interface PropertyMapper {
 
 	PropertyMapper INSTANCE = Mappers.getMapper(PropertyMapper.class);

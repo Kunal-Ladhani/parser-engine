@@ -7,6 +7,7 @@ import com.parser.engine.dto.PropertyExcelDto;
 import com.parser.engine.dto.filter.FileSearchFilterDto;
 import com.parser.engine.dto.response.FileDetailsRespDto;
 import com.parser.engine.entity.File;
+import com.parser.engine.enums.FileProcessingStatus;
 import com.parser.engine.exception.InvalidFileTypeException;
 import com.parser.engine.exception.ServiceException;
 import com.parser.engine.helper.AwsHelper;
@@ -47,6 +48,16 @@ public class FileServiceImpl implements FileService {
 		File file = fileDao.getFileMetadataById(fileId);
 		log.info("file data: {}", file);
 
+		// check if file is marked deleted
+		if (file.getIsDeleted()) {
+			throw new ServiceException(ExceptionCode.F108, String.format(ExceptionCode.F108.getDefaultMessage(), file.getDeletedBy()));
+		}
+
+		// check if file was already processed
+		if (file.getIsProcessed()) {
+			throw new ServiceException(ExceptionCode.F109, String.format(ExceptionCode.F109.getDefaultMessage(), file.getProcessedBy()));
+		}
+
 		// check if it actually has Excel format
 		if (!excelHelper.hasExcelFormat(file.getContentType())) {
 			throw new InvalidFileTypeException(ExceptionCode.F101, ExceptionCode.F101.getDefaultMessage());
@@ -67,11 +78,12 @@ public class FileServiceImpl implements FileService {
 			// List<PropertyExcelDto> excelData = excelHelper.extractDataFromExcelWithMapStruct(inputStream);
 
 			propertyDao.savePropertyData(propertyExcelDtoList);
+			fileDao.markFileStatus(fileId, FileProcessingStatus.COMPLETED);
 		} catch (Exception e) {
+			fileDao.markFileStatus(fileId, FileProcessingStatus.FAILED);
 			log.error("Error occurred while processing excel file with fileId: {}", fileId);
 			throw new ServiceException(ExceptionCode.F103, ExceptionCode.F103.getDefaultMessage());
 		}
-
 	}
 
 	@Override
@@ -87,6 +99,11 @@ public class FileServiceImpl implements FileService {
 			log.error("Error occurred while searching for files: {}", e.getMessage());
 			throw new ServiceException(ExceptionCode.F107, ExceptionCode.F107.getDefaultMessage());
 		}
+	}
+
+	@Override
+	public void softDeleteFile(UUID fileId) {
+		fileDao.softDeleteFile(fileId);
 	}
 
 }

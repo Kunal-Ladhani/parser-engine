@@ -7,7 +7,7 @@ import com.parser.engine.enums.FurnishingStatus;
 import com.parser.engine.enums.ListingType;
 import lombok.Data;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -42,6 +42,6 @@ public class PropertyDetailsRespDto {
 
 	private AvailabilityStatus availabilityStatus;
 
-	private ZonedDateTime leaseOrRentExpiryDate;
+	private LocalDateTime leaseOrRentExpiryDate;
 
 }

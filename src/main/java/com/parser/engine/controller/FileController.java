@@ -48,5 +48,11 @@ public class FileController {
 		return ResponseEntity.ok("Processed.");
 	}
 
+	@PatchMapping(value = "/{fileId}/delete")
+	public ResponseEntity<String> softDeleteFile(@PathVariable UUID fileId) {
+		fileService.softDeleteFile(fileId);
+		return ResponseEntity.ok("Deleted.");
+	}
+
 
 }

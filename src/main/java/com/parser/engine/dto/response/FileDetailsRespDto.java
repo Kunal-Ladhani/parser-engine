@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -26,7 +26,7 @@ public class FileDetailsRespDto extends Auditable {
 
 	private String contentType;
 
-	private Instant uploadedAt;
+	private LocalDateTime uploadedAt;
 
 	private String uploadedBy;
 
