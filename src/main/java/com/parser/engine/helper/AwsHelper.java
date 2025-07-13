@@ -2,7 +2,10 @@ package com.parser.engine.helper;
 
 import com.parser.engine.dto.PreSignedUrlDto;
 import com.parser.engine.entity.File;
+import com.parser.engine.enums.FileProcessingStatus;
+import com.parser.engine.enums.FileType;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +27,7 @@ import software.amazon.awssdk.utils.IoUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -60,18 +63,22 @@ public class AwsHelper {
 			RequestBody requestBody = RequestBody.fromBytes(IoUtils.toByteArray(inputStream));
 			PutObjectResponse result = s3Client.putObject(putObjectRequest, requestBody);
 			return File.builder()
-					.fileName(fileName)
-					.fileType(contentType)
-					.size(size)
-					.bucketName(bucketName)
-					.etag(result.eTag())
-					.contentType(contentType)
+					.fileName(FilenameUtils.getBaseName(fileName))
+					.fileType(FileType.EXCEL.name())
+					.fileProcessingStatus(FileProcessingStatus.PENDING)
 					.s3Key(fileName)
 					.awsKey(awsKey)
-					.uploadedAt(Instant.now())
+					.size(size)
+					.etag(result.eTag())
+					.bucketName(bucketName)
+					.contentType(contentType)
+					.uploadedAt(LocalDateTime.now())
+					.uploadedBy("kunalladhani@gmail.com")    // TODO: use `SecurityUtils.getLoggedInUserEmailId()`
+					.isDeleted(false)
+					.isProcessed(false)
 					.build();
 		} catch (Exception e) {
-			log.error("Exception: {}", e.getMessage(), e);
+			log.error("Exception occurred when pushing to S3: {}", e.getMessage(), e);
 			throw e;
 		}
 	}

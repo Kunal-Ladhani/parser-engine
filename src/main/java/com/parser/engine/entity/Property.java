@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -69,6 +69,6 @@ public class Property extends Auditable {
 	private AvailabilityStatus availabilityStatus;
 
 	@Column(name = PropertyEntity.TENURE_END_DATE)
-	private ZonedDateTime leaseOrRentExpiryDate;
+	private LocalDateTime leaseOrRentExpiryDate;
 
 }

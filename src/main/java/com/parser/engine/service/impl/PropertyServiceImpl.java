@@ -2,7 +2,7 @@ package com.parser.engine.service.impl;
 
 import com.parser.engine.common.ExceptionCode;
 import com.parser.engine.dao.PropertyDao;
-import com.parser.engine.dto.PropertySearchFilter;
+import com.parser.engine.dto.filter.PropertySearchFilterDto;
 import com.parser.engine.dto.response.PropertyDetailsRespDto;
 import com.parser.engine.exception.ServiceException;
 import com.parser.engine.exception.ValidationException;
@@ -25,14 +25,14 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public Page<PropertyDetailsRespDto> getPropertyDetails(PropertySearchFilter propertySearchFilter, Pageable pageable) {
+    public Page<PropertyDetailsRespDto> getPropertyDetails(PropertySearchFilterDto propertySearchFilterDto, Pageable pageable) {
         try {
-            log.info("Fetching property details with the filter: {}", propertySearchFilter.toString());
-            if (!propertySearchFilter.isAtleastOneFilterPresent()) {
+            log.info("Fetching property details with the filter: {}", propertySearchFilterDto.toString());
+            if (!propertySearchFilterDto.isAtleastOneFilterPresent()) {
                 throw new ValidationException(ExceptionCode.V101, "No filter parameter present.");
             }
 
-            Page<PropertyDetailsRespDto> propertyDetailsRespDtoPage = propertyDao.getPropertyDetailsPageByFilter(propertySearchFilter, pageable);
+            Page<PropertyDetailsRespDto> propertyDetailsRespDtoPage = propertyDao.getPropertyDetailsPageByFilter(propertySearchFilterDto, pageable);
             log.info("Property details page by filter: {}", propertyDetailsRespDtoPage);
 
             return propertyDetailsRespDtoPage;

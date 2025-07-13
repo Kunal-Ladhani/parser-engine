@@ -1,8 +1,10 @@
 package com.parser.engine.config;
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.parser.engine.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -15,6 +17,7 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 
 import java.net.URI;
+import java.util.TimeZone;
 
 @Slf4j
 @Configuration
@@ -76,4 +79,11 @@ public class AwsConfig {
 				.build();
 	}
 
+	@Bean
+	public Jackson2ObjectMapperBuilderCustomizer jacksonObjectMapperCustomization() {
+		return builder -> {
+			builder.timeZone(TimeZone.getTimeZone("Asia/Kolkata"));
+			builder.modules(new JavaTimeModule());
+		};
+	}
 }
