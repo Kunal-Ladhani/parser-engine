@@ -17,17 +17,17 @@ public class PropertySearchFilterDto {
     private String quotedAmount;
     private String carParkingSlots;
 
-    public boolean isAtleastOneFilterPresent() {
-        String builder = numberOfRk
-                + numberOfBhk
-                + location
-                + floor
-                + furnishingStatus
-                + area
-                + quotedAmount
-                + carParkingSlots;
-        return StringUtils.hasText(builder
-                .replace("null", "")
-                .replace("\\[\\]", ""));
-    }
+//    public boolean isAtleastOneFilterPresent() {
+//        String builder = numberOfRk
+//                + numberOfBhk
+//                + location
+//                + floor
+//                + furnishingStatus
+//                + area
+//                + quotedAmount
+//                + carParkingSlots;
+//        return StringUtils.hasText(builder
+//                .replace("null", "")
+//                .replace("\\[\\]", ""));
+//    }
 }

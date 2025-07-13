@@ -8,11 +8,14 @@ import com.parser.engine.enums.ListingType;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PropertyDetailsRespDto {
+
+	private UUID id;
 
 	private String buildingName;
 

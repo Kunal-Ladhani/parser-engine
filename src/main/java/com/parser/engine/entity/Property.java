@@ -1,5 +1,6 @@
 package com.parser.engine.entity;
 
+import com.parser.engine.common.Constants;
 import com.parser.engine.common.Constants.PropertyEntity;
 import com.parser.engine.enums.AvailabilityStatus;
 import com.parser.engine.enums.FurnishingStatus;
@@ -11,6 +12,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -20,8 +22,9 @@ import java.time.LocalDateTime;
 public class Property extends Auditable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(name = Constants.FileEntity.ID, updatable = false, nullable = false)
+	private UUID id;
 
 	@Column(name = PropertyEntity.BUILDING_NAME)
 	private String buildingName;
