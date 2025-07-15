@@ -13,7 +13,7 @@ import java.util.UUID;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PropertyDetailsRespDto {
+public class PropertySearchRespDto {
 
 	private UUID id;
 

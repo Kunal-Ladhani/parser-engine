@@ -29,7 +29,8 @@ public enum ExceptionCode {
 
 	O101("O101", "Operation not allowed"),
 
-	P101("P101", "Error while searching for property"),
+	P101("P101", "Error while searching for properties"),
+	P102("P102", "Property details not found for property Id: "),
 
 	S102("S102", "Service temporarily unavailable"),
 

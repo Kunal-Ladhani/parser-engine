@@ -1,7 +1,8 @@
 package com.parser.engine.mapper;
 
 import com.parser.engine.dto.PropertyExcelDto;
-import com.parser.engine.dto.response.PropertyDetailsRespDto;
+import com.parser.engine.dto.response.PropertyDetailRespDto;
+import com.parser.engine.dto.response.PropertySearchRespDto;
 import com.parser.engine.entity.Property;
 import com.parser.engine.enums.FurnishingStatus;
 import org.mapstruct.Mapper;
@@ -35,7 +36,9 @@ public interface PropertyMapper {
 	@Mapping(target = "numberOfRk", ignore = true)	// populate it
 	Property toEntity(PropertyExcelDto dto);
 
-	PropertyDetailsRespDto toResponseDto(Property entity);
+	PropertySearchRespDto toSearchResponseDto(Property entity);
+
+	PropertyDetailRespDto toDetailResponseDto(Property entity);
 
 	// custom parsers
 	default Double parseDouble(String value) {
