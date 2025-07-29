@@ -15,7 +15,7 @@ spring:
   mvc:
     dispatch-options-request: true
     pathmatch:
-      matching-strategy: ant_path_matcher
+      matching-strategy: ANT_PATH_MATCHER
     format:
       date: dd/MM/yyyy
       date-time: yyyy-MM-dd HH:mm:ss

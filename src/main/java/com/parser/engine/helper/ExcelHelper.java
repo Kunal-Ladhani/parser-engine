@@ -192,7 +192,7 @@ public class ExcelHelper {
 				default -> field.set(dto, null);
 			}
 		} catch (Exception e) {
-			log.warn("Failed to set value for field :: {} error message :: {}", fieldName, e.getMessage());
+			log.error("Failed to set value for field :: {} error message :: {}", fieldName, e.getMessage());
 		}
 	}
 
