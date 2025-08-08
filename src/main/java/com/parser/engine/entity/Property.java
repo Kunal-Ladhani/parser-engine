@@ -1,16 +1,25 @@
 package com.parser.engine.entity;
 
+import java.time.ZonedDateTime;
+import java.util.UUID;
+
+import com.parser.engine.common.Constants;
 import com.parser.engine.common.Constants.PropertyEntity;
 import com.parser.engine.enums.AvailabilityStatus;
 import com.parser.engine.enums.FurnishingStatus;
 import com.parser.engine.enums.ListingType;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -20,8 +29,9 @@ import java.time.LocalDateTime;
 public class Property extends Auditable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(name = Constants.FileEntity.ID, updatable = false, nullable = false)
+	private UUID id;
 
 	@Column(name = PropertyEntity.BUILDING_NAME)
 	private String buildingName;
@@ -69,6 +79,6 @@ public class Property extends Auditable {
 	private AvailabilityStatus availabilityStatus;
 
 	@Column(name = PropertyEntity.TENURE_END_DATE)
-	private LocalDateTime leaseOrRentExpiryDate;
+	private ZonedDateTime leaseOrRentExpiryDate;
 
 }

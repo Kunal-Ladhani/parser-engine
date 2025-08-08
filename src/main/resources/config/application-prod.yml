@@ -13,14 +13,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
+        jdbc:
+          time_zone: Asia/Kolkata
     database: mysql
   mvc:
     pathmatch:
-      matching-strategy: ant_path_matcher
+      matching-strategy: ANT_PATH_MATCHER
   docker:
     compose:
       file: docker-compose.yml
@@ -32,3 +34,13 @@ aws:
     bucket_name: ${{ env.S3_BUCKET_NAME }}
     access_key: ${{ env.ACCESS_KEY }}
     secret_key: ${{ env.SECRET_KEY }}
+
+# JWT Configuration
+app:
+  jwt:
+    secret: "dGhpc2lzYXZlcnlsb25nYW5kc2VjdXJlc2VjcmV0a2V5Zm9yand0dG9rZW5zaWduaW5ndGhhdGlzMzJieXRlc2xvbmc="
+    expiration-seconds: 900 # 15 minutes (short-lived access token)
+    token-prefix: "Bearer "
+    header-string: "Authorization"
+    enable-token-blacklist: false
+    refresh-token-expiration-seconds: 259200 # 3 days

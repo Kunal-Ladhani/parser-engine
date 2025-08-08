@@ -3,19 +3,27 @@ package com.parser.engine.dto.response;
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.parser.engine.common.ExceptionCode;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExceptionRespDto {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class LogoutResponseDto {
 
+	private String username;
+	private String email;
+	private String message;
+	private String note;
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "Asia/Kolkata")
 	private ZonedDateTime timestamp;
-	private ExceptionCode exceptionCode;
-	private String errorMessage;
+
 }

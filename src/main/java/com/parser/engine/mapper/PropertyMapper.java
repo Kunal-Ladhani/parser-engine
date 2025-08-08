@@ -1,7 +1,8 @@
 package com.parser.engine.mapper;
 
 import com.parser.engine.dto.PropertyExcelDto;
-import com.parser.engine.dto.response.PropertyDetailsRespDto;
+import com.parser.engine.dto.response.PropertyDetailRespDto;
+import com.parser.engine.dto.response.PropertySearchRespDto;
 import com.parser.engine.entity.Property;
 import com.parser.engine.enums.FurnishingStatus;
 import org.mapstruct.Mapper;
@@ -18,7 +19,6 @@ public interface PropertyMapper {
 
 	PropertyMapper INSTANCE = Mappers.getMapper(PropertyMapper.class);
 
-	@Mapping(target = "id", ignore = true)    // don't want to expose it
 	@Mapping(target = "buildingName", source = "buildingName")
 	@Mapping(target = "floor", source = "floor")
 	@Mapping(target = "location", source = "location")
@@ -27,19 +27,18 @@ public interface PropertyMapper {
 	@Mapping(target = "carParkingSlots", expression = "java(parseInteger(dto.getCarPark()))")
 	@Mapping(target = "furnishingStatus", expression = "java(parseFurnishingStatus(dto.getFurniture()))")
 	@Mapping(target = "comment", source = "comment")
-	@Mapping(target = "brokerName", source = "agent", qualifiedByName = "extractBrokerName")
-	// separate agent name and number - is it a list or single ?
-	@Mapping(target = "brokerPhone", source = "agent", qualifiedByName = "extractBrokerPhone")
-	// separate agent name and number - is it a list or single ?
+	@Mapping(target = "brokerName", source = "agent", qualifiedByName = "extractBrokerName") // separate agent name and number - is it a list or single ?
+	@Mapping(target = "brokerPhone", source = "agent", qualifiedByName = "extractBrokerPhone") // separate agent name and number - is it a list or single ?
 	@Mapping(target = "availabilityStatus", constant = "AVAILABLE")
 	@Mapping(target = "listingType", ignore = true)    // populate it - is it for rent, lease or sale
 	@Mapping(target = "leaseOrRentExpiryDate", ignore = true)
-	@Mapping(target = "numberOfBhk", ignore = true)    // populate it
-	@Mapping(target = "numberOfRk", ignore = true)
-		// populate it
+	@Mapping(target = "numberOfBhk", ignore = true)  // populate it
+	@Mapping(target = "numberOfRk", ignore = true)	// populate it
 	Property toEntity(PropertyExcelDto dto);
 
-	PropertyDetailsRespDto toResponseDto(Property entity);
+	PropertySearchRespDto toSearchResponseDto(Property entity);
+
+	PropertyDetailRespDto toDetailResponseDto(Property entity);
 
 	// custom parsers
 	default Double parseDouble(String value) {
