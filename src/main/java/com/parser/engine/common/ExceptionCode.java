@@ -46,6 +46,7 @@ public enum ExceptionCode {
 	F107("F107", "Error while searching for files"),
 	F108("F108", "File was deleted by: {}"),
 	F109("F109", "File already processed by: {}"),
+	F110("F110", "File with this name already exists. Please choose a different name."),
 
 	// Properties related errors
 	P101("P101", "Error while searching for properties"),
