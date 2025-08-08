@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -59,16 +60,25 @@ public class JwtFilter extends OncePerRequestFilter {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		if (authentication == null) {
-			//Authenticate the user
-			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+			try {
+				// Authenticate the user
+				UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-			if (jwtUtils.isTokenValid(jwt, userDetails)) {
-				UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-				authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-				SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-				log.info("User {} authenticated successfully", username);
-			} else {
-				log.error("JWT token is not valid for user: {}", username);
+				if (jwtUtils.isTokenValid(jwt, userDetails)) {
+					UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+					authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+					SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+					log.info("User {} authenticated successfully", username);
+				} else {
+					log.error("JWT token is not valid for user: {}", username);
+				}
+			} catch (UsernameNotFoundException e) {
+				log.error("User not found for JWT authentication: {}", username);
+				// Don't set authentication context - let the request continue without authentication
+				// If the endpoint requires authentication, Spring Security will return 401
+			} catch (Exception e) {
+				log.error("Error during JWT authentication for user {}: {}", username, e.getMessage());
+				// Don't set authentication context for any other errors
 			}
 		}
 

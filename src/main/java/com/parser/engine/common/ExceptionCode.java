@@ -14,6 +14,8 @@ public enum ExceptionCode {
 	A105("A105", "Invalid token signature. Please login again."),
 	A106("A106", "Unsupported token format. Please login again."),
 	A107("A107", "Token processing failed. Please login again."),
+	A121("A121", "Access token is still valid. Refresh not needed."),
+	A122("A122", "Token mismatch. Please login again."),
 
 	// Account related errors
 	A108("A108", "Account is disabled. Please contact support."),
@@ -29,6 +31,10 @@ public enum ExceptionCode {
 	A114("A114", "Username or Email is required."),
 	A115("A115", "Username is already registered."),
 	A116("A116", "Email is already registered."),
+	A117("A117", "Current password is incorrect."),
+	A118("A118", "New password must be different from current password."),
+	A119("A119", "Password confirmation does not match new password."),
+	A120("A120", "Username format is invalid. Only letters, numbers, underscores, and hyphens are allowed."),
 
 	// File related errors
 	F101("F101", "Invalid file type"),
@@ -54,7 +60,10 @@ public enum ExceptionCode {
 
 	// Generic unknown errors
 	U100("U100", "Unknown exception occurred."),
-	U102("U102", "Nothing was modified."),
+
+	N100("N100", "Nothing was modified."),
+	N101("N101", "At least one field must be provided for update"),
+	N102("N102", "No valid fields provided for update"),
 
 	// Resource related errors
 	R101("R101", "%s does not exist"),

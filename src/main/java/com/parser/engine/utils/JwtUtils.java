@@ -1,25 +1,33 @@
 package com.parser.engine.utils;
 
-import com.parser.engine.config.JwtConfig;
-import com.parser.engine.dto.response.TokenResponseDto;
-import com.parser.engine.entity.RefreshToken;
-import com.parser.engine.entity.User;
-import com.parser.engine.service.RefreshTokenService;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecurityException;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-
-import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
+
+import javax.crypto.SecretKey;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
+import com.parser.engine.config.JwtConfig;
+import com.parser.engine.dto.response.TokenResponseDto;
+import com.parser.engine.entity.RefreshToken;
+import com.parser.engine.entity.User;
+import com.parser.engine.service.RefreshTokenService;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -109,6 +117,8 @@ public class JwtUtils {
 				.username(user.getUsername())
 				.email(user.getEmail())
 				.role(user.getRole().name())
+				.firstName(user.getFirstName())
+				.lastName(user.getLastName())
 				.build();
 	}
 

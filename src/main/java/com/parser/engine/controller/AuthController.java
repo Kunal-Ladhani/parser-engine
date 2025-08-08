@@ -1,11 +1,7 @@
 package com.parser.engine.controller;
 
-import com.parser.engine.dto.request.DeleteAccountRequestDto;
-import com.parser.engine.dto.request.LoginRequestDto;
-import com.parser.engine.dto.request.SignupRequestDto;
-import com.parser.engine.dto.response.AccountDeletionResponseDto;
-import com.parser.engine.dto.response.LogoutResponseDto;
-import com.parser.engine.dto.response.TokenResponseDto;
+import com.parser.engine.dto.request.*;
+import com.parser.engine.dto.response.*;
 import com.parser.engine.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -43,9 +39,11 @@ public class AuthController {
 	}
 
 	@PostMapping("/v1/refresh")
-	public ResponseEntity<TokenResponseDto> refreshToken(@RequestHeader("X-Refresh-Token") String refreshToken) {
+	public ResponseEntity<TokenResponseDto> refreshToken(
+			@RequestHeader("X-Refresh-Token") String refreshToken,
+			@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
 		log.info("Refresh token request received.");
-		TokenResponseDto response = authService.refreshToken(refreshToken);
+		TokenResponseDto response = authService.refreshToken(refreshToken, authorizationHeader);
 		log.info("Refresh token successful for user: {}", response.getUsername());
 		return ResponseEntity.ok(response);
 	}
@@ -63,6 +61,22 @@ public class AuthController {
 		log.info("Account deletion request received");
 		AccountDeletionResponseDto response = authService.deleteAccount(deleteRequest);
 		log.info("Account deletion completed for user: {}", response.getUsername());
+		return ResponseEntity.ok(response);
+	}
+
+	@PatchMapping("/v1/update-profile")
+	public ResponseEntity<UpdateProfileResponseDto> updateProfile(@Valid @RequestBody UpdateProfileRequestDto updateRequest) {
+		log.info("Profile update request received: {}", updateRequest);
+		UpdateProfileResponseDto response = authService.updateProfile(updateRequest);
+		log.info("Profile updated successfully for user: {}", response.getUsername());
+		return ResponseEntity.ok(response);
+	}
+
+	@PatchMapping("/v1/change-password")
+	public ResponseEntity<ChangePasswordResponseDto> changePassword(@Valid @RequestBody ChangePasswordRequestDto changePasswordRequest) {
+		log.info("Password change request received");
+		ChangePasswordResponseDto response = authService.changePassword(changePasswordRequest);
+		log.info("Password changed successfully for user: {}", response.getUsername());
 		return ResponseEntity.ok(response);
 	}
 

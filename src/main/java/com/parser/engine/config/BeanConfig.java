@@ -13,6 +13,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
+import java.time.ZoneId;
+import java.util.TimeZone;
+
 @Configuration
 public class BeanConfig {
 
@@ -23,9 +26,15 @@ public class BeanConfig {
 				.serializationInclusion(JsonInclude.Include.NON_NULL)
 				.failOnUnknownProperties(false)
 				.defaultViewInclusion(false)
+				.timeZone(TimeZone.getTimeZone(ZoneId.of("Asia/Kolkata")))
+				.simpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
 				.build();
+
+		// Configure date/time serialization
+		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 		objectMapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
 		objectMapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
+		objectMapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
 
 		// register a module to clean up non-breaking spaces in all string fields
 		SimpleModule module = new SimpleModule();
@@ -42,5 +51,5 @@ public class BeanConfig {
 		modelMapper.registerModule(new JacksonModule(objectMapper()));
 		return modelMapper;
 	}
-	 
+
 }

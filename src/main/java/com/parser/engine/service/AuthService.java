@@ -1,22 +1,22 @@
 package com.parser.engine.service;
 
-import com.parser.engine.dto.request.DeleteAccountRequestDto;
-import com.parser.engine.dto.request.LoginRequestDto;
-import com.parser.engine.dto.request.SignupRequestDto;
-import com.parser.engine.dto.response.AccountDeletionResponseDto;
-import com.parser.engine.dto.response.LogoutResponseDto;
-import com.parser.engine.dto.response.TokenResponseDto;
+import com.parser.engine.dto.request.*;
+import com.parser.engine.dto.response.*;
 
 public interface AuthService {
 
-    TokenResponseDto signup(SignupRequestDto signupRequest);
+	TokenResponseDto signup(SignupRequestDto signupRequest);
 
-    TokenResponseDto login(LoginRequestDto loginRequest);
+	TokenResponseDto login(LoginRequestDto loginRequest);
 
-    TokenResponseDto refreshToken(String refreshToken);
+	TokenResponseDto refreshToken(String refreshToken, String authorizationHeader);
 
-    LogoutResponseDto logout();
+	LogoutResponseDto logout();
 
-    AccountDeletionResponseDto deleteAccount(DeleteAccountRequestDto deleteRequest);
+	AccountDeletionResponseDto deleteAccount(DeleteAccountRequestDto deleteRequest);
+
+	UpdateProfileResponseDto updateProfile(UpdateProfileRequestDto updateRequest);
+
+	ChangePasswordResponseDto changePassword(ChangePasswordRequestDto changePasswordRequest);
 
 }

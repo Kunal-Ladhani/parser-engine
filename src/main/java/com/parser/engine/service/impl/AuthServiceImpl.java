@@ -1,12 +1,8 @@
 package com.parser.engine.service.impl;
 
 import com.parser.engine.common.ExceptionCode;
-import com.parser.engine.dto.request.DeleteAccountRequestDto;
-import com.parser.engine.dto.request.LoginRequestDto;
-import com.parser.engine.dto.request.SignupRequestDto;
-import com.parser.engine.dto.response.AccountDeletionResponseDto;
-import com.parser.engine.dto.response.LogoutResponseDto;
-import com.parser.engine.dto.response.TokenResponseDto;
+import com.parser.engine.dto.request.*;
+import com.parser.engine.dto.response.*;
 import com.parser.engine.entity.RefreshToken;
 import com.parser.engine.entity.User;
 import com.parser.engine.enums.Role;
@@ -16,6 +12,7 @@ import com.parser.engine.repository.UserRepository;
 import com.parser.engine.service.AccountDeletionService;
 import com.parser.engine.service.AuthService;
 import com.parser.engine.service.RefreshTokenService;
+import com.parser.engine.utils.DateTimeUtils;
 import com.parser.engine.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +26,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 
 @Slf4j
@@ -134,12 +131,36 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	@Transactional
-	public TokenResponseDto refreshToken(String refreshRequestHeader) {
-		log.info("Processing refresh token request");
+	public TokenResponseDto refreshToken(String refreshRequestHeader, String authorizationHeader) {
+		log.info("Processing secure refresh token request");
 
 		// Validate refresh token input
 		if (Objects.isNull(refreshRequestHeader) || refreshRequestHeader.trim().isEmpty()) {
 			throw new ValidationException(ExceptionCode.A104, "Refresh token is required");
+		}
+
+		// Validate authorization header (access token)
+		if (Objects.isNull(authorizationHeader) || authorizationHeader.trim().isEmpty()) {
+			throw new ValidationException(ExceptionCode.A104, "Access token is required for refresh");
+		}
+
+		// Extract access token from Authorization header
+		String accessToken = null;
+		if (authorizationHeader.startsWith("Bearer ")) {
+			accessToken = authorizationHeader.substring(7);
+		} else {
+			throw new ValidationException(ExceptionCode.A104, "Invalid authorization header format");
+		}
+
+		// Validate access token format and extract user info
+		String accessTokenUsername = jwtUtils.extractUsername(accessToken);
+		if (accessTokenUsername == null) {
+			throw new ValidationException(ExceptionCode.A104, "Invalid access token");
+		}
+
+		// Check if access token is expired (should be expired for refresh to be needed)
+		if (!jwtUtils.isTokenExpired(accessToken)) {
+			throw new ValidationException(ExceptionCode.A121, ExceptionCode.A121.getDefaultMessage());
 		}
 
 		// Find and verify refresh token
@@ -148,13 +169,19 @@ public class AuthServiceImpl implements AuthService {
 
 		User user = refreshToken.getUser();
 
-		// Revoke the used refresh token
+		// SECURITY: Verify that refresh token belongs to the same user as access token
+		if (!user.getEmail().equals(accessTokenUsername)) {
+			log.error("Refresh token mismatch: refresh token user {} IS NOT SAME AS access token user {}", user.getEmail(), accessTokenUsername);
+			throw new ValidationException(ExceptionCode.A122, ExceptionCode.A122.getDefaultMessage());
+		}
+
+		// Revoke the used refresh token (rotation)
 		refreshTokenService.revokeToken(refreshToken);
 
 		// Generate new tokens
 		TokenResponseDto tokenResponse = jwtUtils.generateTokenResponse(user);
 
-		log.info("Refresh token successful for user: {}", user.getEmail());
+		log.info("Secure refresh token successful for user: {}", user.getEmail());
 		return tokenResponse;
 	}
 
@@ -189,7 +216,7 @@ public class AuthServiceImpl implements AuthService {
 					.email(email)
 					.message("Logout successful")
 					.note(String.format("Access token remains valid for up to 15 minutes. %d refresh tokens revoked.", revokedTokensCount))
-					.timestamp(ZonedDateTime.now())
+					.timestamp(DateTimeUtils.nowInIndia())
 					.build();
 
 		} catch (Exception e) {
@@ -204,7 +231,7 @@ public class AuthServiceImpl implements AuthService {
 					.email(email)
 					.message("Logout completed with warnings")
 					.note("Some cleanup operations failed, but user session has been cleared")
-					.timestamp(ZonedDateTime.now())
+					.timestamp(DateTimeUtils.nowInIndia())
 					.build();
 		}
 	}
@@ -240,7 +267,7 @@ public class AuthServiceImpl implements AuthService {
 		// Verify password
 		if (!passwordEncoder.matches(deleteRequest.getCurrentPassword(), user.getPassword())) {
 			log.error("Invalid password provided for account deletion: {}", user.getEmail());
-			throw new ValidationException(ExceptionCode.A113, "Invalid password provided");
+			throw new ValidationException(ExceptionCode.A117, ExceptionCode.A117.getDefaultMessage());
 		}
 
 		log.info("Starting account deletion for user: {}", user.getEmail());
@@ -258,11 +285,13 @@ public class AuthServiceImpl implements AuthService {
 
 			// Handle files and properties based on user preference
 			if (deleteRequest.isDeleteAllData()) {
-				filesDeleted = accountDeletionService.deleteUserFiles(user);
-				propertiesDeleted = accountDeletionService.deleteUserProperties(user);
+				log.info("WILL NOT Delete any data for user: {}", user.getEmail());
+//				filesDeleted = accountDeletionService.deleteUserFiles(user);
+//				propertiesDeleted = accountDeletionService.deleteUserProperties(user);
 			} else if (deleteRequest.isAnonymizeData()) {
-				filesAnonymized = accountDeletionService.anonymizeUserFiles(user);
-				propertiesAnonymized = accountDeletionService.anonymizeUserProperties(user);
+				log.info("WILL NOT Anonymize any data for user: {}", user.getEmail());
+//				filesAnonymized = accountDeletionService.anonymizeUserFiles(user);
+//				propertiesAnonymized = accountDeletionService.anonymizeUserProperties(user);
 			}
 
 			// Delete the user account (final step)
@@ -271,14 +300,13 @@ public class AuthServiceImpl implements AuthService {
 			// Clear security context
 			SecurityContextHolder.clearContext();
 
-			log.info("Account deletion completed for user: {} | Tokens: {} | Files: {} | Properties: {}",
-					user.getEmail(), refreshTokensDeleted, filesDeleted, propertiesDeleted);
+			log.info("Account deletion completed for user: {} | Tokens: {} | Files: {} | Properties: {}", user.getEmail(), refreshTokensDeleted, filesDeleted, propertiesDeleted);
 
 			return AccountDeletionResponseDto.builder()
 					.message("Account deleted successfully")
 					.username(user.getUsername())
 					.email(user.getEmail())
-					.deletedAt(ZonedDateTime.now())
+					.deletedAt(DateTimeUtils.nowInIndia())
 					.refreshTokensDeleted(refreshTokensDeleted)
 					.filesDeleted(filesDeleted)
 					.propertiesDeleted(propertiesDeleted)
@@ -289,6 +317,134 @@ public class AuthServiceImpl implements AuthService {
 		} catch (Exception e) {
 			log.error("Error during account deletion for user {}: {}", user.getEmail(), e.getMessage());
 			throw new RuntimeException("Account deletion failed: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	@Transactional
+	public UpdateProfileResponseDto updateProfile(UpdateProfileRequestDto updateRequest) {
+		log.info("Profile update request received: {}", updateRequest);
+
+		// Validate that at least one field is provided
+		if (!updateRequest.hasAnyField()) {
+			throw new ValidationException(ExceptionCode.N101, ExceptionCode.N101.getDefaultMessage());
+		}
+
+		// Get current authenticated user
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null || auth.getName() == null) {
+			throw new ValidationException(ExceptionCode.A101, "User must be authenticated to update profile");
+		}
+
+		// Find the user
+		User user = userRepository.findByEmail(auth.getName())
+				.orElseThrow(() -> {
+					log.error("User account not found for profile update: {}", auth.getName());
+					return new ValidationException(ExceptionCode.A112, "User account not found");
+				});
+
+		// Check email uniqueness if email is being updated
+		if (Objects.nonNull(updateRequest.getEmail()) && !updateRequest.getEmail().equalsIgnoreCase(user.getEmail())) {
+			Optional<User> existingEmailUser = userRepository.findByEmail(updateRequest.getEmail());
+			if (existingEmailUser.isPresent()) {
+				log.error("Email already exists: {}", updateRequest.getEmail());
+				throw new ResourceAlreadyExistsException(ExceptionCode.A116, ExceptionCode.A116.getDefaultMessage());
+			}
+		}
+
+		// Update only provided fields
+		boolean hasChanges = false;
+		if (Objects.nonNull(updateRequest.getFirstName()) && !updateRequest.getFirstName().equalsIgnoreCase(user.getFirstName())) {
+			user.setFirstName(updateRequest.getFirstName());
+			hasChanges = true;
+		}
+		if (Objects.nonNull(updateRequest.getLastName()) && !updateRequest.getLastName().equalsIgnoreCase(user.getLastName())) {
+			user.setLastName(updateRequest.getLastName());
+			hasChanges = true;
+		}
+		if (Objects.nonNull(updateRequest.getEmail()) && !updateRequest.getEmail().equalsIgnoreCase(user.getEmail())) {
+			user.setEmail(updateRequest.getEmail());
+			hasChanges = true;
+		}
+
+		if (!hasChanges) {
+			throw new ValidationException(ExceptionCode.N100, ExceptionCode.N100.getDefaultMessage());
+		}
+
+		// Save updated user
+		User updatedUser = userRepository.save(user);
+		log.info("Profile updated successfully for user: {}", updatedUser.getEmail());
+
+		return UpdateProfileResponseDto.builder()
+				.message("Profile updated successfully")
+				.username(updatedUser.getUsername()) // Username stays the same
+				.email(updatedUser.getEmail())
+				.firstName(updatedUser.getFirstName())
+				.lastName(updatedUser.getLastName())
+				.role(updatedUser.getRole().name())
+				.updatedAt(DateTimeUtils.nowInIndia())
+				.build();
+	}
+
+	@Override
+	@Transactional
+	public ChangePasswordResponseDto changePassword(ChangePasswordRequestDto changePasswordRequest) {
+		log.info("Password change request received for user");
+
+		// Validate password confirmation
+		if (!changePasswordRequest.isPasswordConfirmed()) {
+			throw new ValidationException(ExceptionCode.A119, ExceptionCode.A119.getDefaultMessage());
+		}
+
+		// Get current authenticated user
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null || auth.getName() == null) {
+			throw new ValidationException(ExceptionCode.A101, "User must be authenticated to change password");
+		}
+
+		// Find the user
+		User user = userRepository.findByEmail(auth.getName())
+				.orElseThrow(() -> {
+					log.error("User account not found for password change: {}", auth.getName());
+					return new ValidationException(ExceptionCode.A112, "User account not found");
+				});
+
+		// Verify current password
+		if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), user.getPassword())) {
+			log.error("Invalid current password provided for password change: {}", user.getEmail());
+			throw new ValidationException(ExceptionCode.A117, ExceptionCode.A117.getDefaultMessage());
+		}
+
+		// Check if new password is different from current
+		if (passwordEncoder.matches(changePasswordRequest.getNewPassword(), user.getPassword())) {
+			throw new ValidationException(ExceptionCode.A118, ExceptionCode.A118.getDefaultMessage());
+		}
+
+		try {
+			// Update password
+			user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+			userRepository.save(user);
+
+			// Revoke all refresh tokens for security (force re-login on all devices)
+			int revokedTokensCount = refreshTokenService.revokeAllUserTokens(user);
+
+			// Clear current security context to force re-authentication
+			SecurityContextHolder.clearContext();
+
+			log.info("Password changed successfully for user: {}. {} refresh tokens revoked.", user.getEmail(), revokedTokensCount);
+
+			return ChangePasswordResponseDto.builder()
+					.message("Password changed successfully")
+					.username(user.getUsername())
+					.email(user.getEmail())
+					.refreshTokensRevoked(revokedTokensCount)
+					.changedAt(DateTimeUtils.nowInIndia())
+					.securityNote("All sessions have been terminated. Please log in again with your new password.")
+					.build();
+
+		} catch (Exception e) {
+			log.error("Error during password change for user {}: {}", user.getEmail(), e.getMessage());
+			throw new RuntimeException("Password change failed: " + e.getMessage(), e);
 		}
 	}
 }

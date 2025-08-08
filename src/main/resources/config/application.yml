@@ -27,6 +27,11 @@ spring:
       adjust-dates-to-context-time-zone: false
     serialization:
       write-dates-as-timestamps: false
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Asia/Kolkata
 
 springdoc:
   api-docs:

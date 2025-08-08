@@ -13,7 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import com.parser.engine.utils.DateTimeUtils;
 import java.util.List;
 
 @Slf4j
@@ -51,7 +52,7 @@ public class AccountDeletionServiceImpl implements AccountDeletionService {
 		// Mark as deleted (soft delete)
 		userFiles.forEach(file -> {
 			file.setIsDeleted(true);
-			file.setDeletedAt(LocalDateTime.now());
+			file.setDeletedAt(DateTimeUtils.nowInIndia());
 			file.setDeletedBy(SecurityUtils.getLoggedInUserEmail());
 		});
 

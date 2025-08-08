@@ -16,7 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -58,7 +58,7 @@ public class FileDao {
 			if (Objects.nonNull(file)) {
 				if (FileProcessingStatus.COMPLETED.equals(status)) {
 					file.setIsProcessed(true);
-					file.setProcessedAt(LocalDateTime.now());
+					file.setProcessedAt(ZonedDateTime.now());
 					file.setProcessedBy("kunalladhani@gmail.com");    // TODO: use `SecurityUtils.getCurrentLoggedInUser()`
 				}
 				file.setFileProcessingStatus(status);
@@ -75,7 +75,7 @@ public class FileDao {
 			File file = this.getFileMetadataById(fileId);
 			if (Objects.nonNull(file) && !file.getIsDeleted()) {
 				file.setIsDeleted(true);
-				file.setDeletedAt(LocalDateTime.now());
+				file.setDeletedAt(ZonedDateTime.now());
 				file.setDeletedBy("kunalladhani@gmail.com");    // TODO: use `SecurityUtils.getCurrentLoggedInUser()`
 				fileRepository.save(file);
 			}

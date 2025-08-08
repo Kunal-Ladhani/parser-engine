@@ -1,7 +1,7 @@
 package com.parser.engine.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -27,7 +27,7 @@ public abstract class Auditable implements Serializable {
 
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)
-    private LocalDateTime createdAt;
+    private ZonedDateTime createdAt;
 
     @LastModifiedBy
     @Column(name = "last_updated_by", nullable = false)
@@ -35,6 +35,6 @@ public abstract class Auditable implements Serializable {
 
     @LastModifiedDate
     @Column(name = "last_updated_at", nullable = false)
-    private LocalDateTime lastModifiedAt;
+    private ZonedDateTime lastModifiedAt;
 
 }

@@ -13,20 +13,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountDeletionResponseDto {
+public class ChangePasswordResponseDto {
 
 	private String message;
 	private String username;
 	private String email;
+	private int refreshTokensRevoked;
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "Asia/Kolkata")
-	private ZonedDateTime deletedAt;
+	private ZonedDateTime changedAt;
+	private String securityNote;
 
-	// Summary of deleted data
-	private int refreshTokensDeleted;
-	private int filesDeleted;
-	private int propertiesDeleted;
-
-	// Or anonymized data
-	private int filesAnonymized;
-	private int propertiesAnonymized;
 }

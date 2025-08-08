@@ -1,13 +1,5 @@
 package com.parser.engine.exception;
 
-import com.parser.engine.common.ExceptionCode;
-import com.parser.engine.dto.response.ExceptionRespDto;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.SecurityException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +15,16 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.Date;
+import com.parser.engine.common.ExceptionCode;
+import com.parser.engine.dto.response.ExceptionRespDto;
+import com.parser.engine.utils.DateTimeUtils;
+
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SecurityException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The type Global exception handler.
@@ -174,7 +175,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionRespDto> generalExceptionHandler(Exception exp, WebRequest req) {
 		log.error("General Exception occurred: {}", exp.getMessage(), exp);
 		ExceptionRespDto ExceptionRespDto = new ExceptionRespDto();
-		ExceptionRespDto.setTimestamp(new Date());
+		ExceptionRespDto.setTimestamp(DateTimeUtils.nowInIndia());
 		ExceptionRespDto.setErrorMessage(exp.getMessage());
 		return new ResponseEntity<>(ExceptionRespDto, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
@@ -194,7 +195,7 @@ public class GlobalExceptionHandler {
 				.map(DefaultMessageSourceResolvable::getDefaultMessage)
 				.toList();
 		ExceptionRespDto ExceptionRespDto = new ExceptionRespDto();
-		ExceptionRespDto.setTimestamp(new Date());
+		ExceptionRespDto.setTimestamp(DateTimeUtils.nowInIndia());
 		ExceptionRespDto.setExceptionCode(ExceptionCode.V101);
 		ExceptionRespDto.setErrorMessage(allErrors.toString());
 		return new ResponseEntity<>(ExceptionRespDto, HttpStatus.BAD_REQUEST);
@@ -204,7 +205,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionRespDto> invalidFileExceptionHandler(ServiceException exp, WebRequest req) {
 		log.error("Exception occurred: {}", exp.getMessage(), exp);
 		ExceptionRespDto ExceptionRespDto = new ExceptionRespDto();
-		ExceptionRespDto.setTimestamp(new Date());
+		ExceptionRespDto.setTimestamp(DateTimeUtils.nowInIndia());
 		ExceptionRespDto.setExceptionCode(exp.getExceptionCode());
 		ExceptionRespDto.setErrorMessage(exp.getMessage());
 		return new ResponseEntity<>(ExceptionRespDto, HttpStatus.NOT_ACCEPTABLE);
@@ -220,7 +221,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionRespDto> resourceDoesNotExistsExceptionHandler(ResourceDoesNotExistsException exp, WebRequest req) {
 		log.error("ResourceDoesNotExistsException occurred: {}", exp.getMessage(), exp);
 		ExceptionRespDto ExceptionRespDto = new ExceptionRespDto();
-		ExceptionRespDto.setTimestamp(new Date());
+		ExceptionRespDto.setTimestamp(DateTimeUtils.nowInIndia());
 		ExceptionRespDto.setExceptionCode(exp.getExceptionCode());
 		ExceptionRespDto.setErrorMessage(exp.getMessage());
 		return new ResponseEntity<>(ExceptionRespDto, HttpStatus.NOT_FOUND);
@@ -239,7 +240,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionRespDto> serviceExceptionHandler(ServiceException exp, WebRequest req) {
 		log.error("Exception occurred: {}", exp.getMessage(), exp);
 		ExceptionRespDto ExceptionRespDto = new ExceptionRespDto();
-		ExceptionRespDto.setTimestamp(new Date());
+		ExceptionRespDto.setTimestamp(DateTimeUtils.nowInIndia());
 		ExceptionRespDto.setExceptionCode(exp.getExceptionCode());
 		ExceptionRespDto.setErrorMessage(exp.getMessage());
 		return new ResponseEntity<>(ExceptionRespDto, HttpStatus.BAD_REQUEST);
@@ -256,7 +257,7 @@ public class GlobalExceptionHandler {
 		HttpStatus status = getHttpStatusForValidationException(exp.getExceptionCode());
 
 		ExceptionRespDto response = new ExceptionRespDto();
-		response.setTimestamp(new Date());
+		response.setTimestamp(DateTimeUtils.nowInIndia());
 		response.setExceptionCode(exp.getExceptionCode());
 		response.setErrorMessage(exp.getMessage());
 
@@ -270,7 +271,7 @@ public class GlobalExceptionHandler {
 	 */
 	private ExceptionRespDto createErrorResponse(ExceptionCode code, String message) {
 		ExceptionRespDto response = new ExceptionRespDto();
-		response.setTimestamp(new Date());
+		response.setTimestamp(DateTimeUtils.nowInIndia());
 		response.setExceptionCode(code);
 		response.setErrorMessage(message);
 		return response;
@@ -304,7 +305,8 @@ public class GlobalExceptionHandler {
 			case "A101", // Authentication failed
 				 "A103", "A104", "A105", "A106", "A107", // JWT token errors
 				 "A108", "A109", "A110", // Account status (disabled, locked, expired)
-				 "A111", "A112", "A113" // Login failures (bad credentials, not found, wrong password)
+				 "A111", "A112", "A113", // Login failures (bad credentials, not found, wrong password)
+				 "A121", "A122" // Refresh token security errors
 					-> HttpStatus.UNAUTHORIZED;
 
 			// Access denied should return 403 FORBIDDEN
@@ -314,6 +316,15 @@ public class GlobalExceptionHandler {
 			case "A115", // Username already registered
 				 "A116" // Email already registered
 					-> HttpStatus.CONFLICT;
+
+			// Form validation errors should return 400 BAD_REQUEST (user stays on current page)
+			case "A117", // Current password incorrect (during password change - don't logout user!)
+				 "A118", // New password must be different from current
+				 "A119", // Password confirmation does not match
+				 "A120", // Username format invalid
+				 "N101", // At least one field must be provided for update
+				 "N102" // No valid fields provided for update
+					-> HttpStatus.BAD_REQUEST;
 
 			// Permission-related codes should return 403 FORBIDDEN
 			case "O101" -> HttpStatus.FORBIDDEN;
