@@ -1,5 +1,14 @@
 package com.parser.engine.exception;
 
+import com.parser.engine.common.ExceptionCode;
+import com.parser.engine.dto.response.ExceptionRespDto;
+import com.parser.engine.utils.DateTimeUtils;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SecurityException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,17 +23,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
-
-import com.parser.engine.common.ExceptionCode;
-import com.parser.engine.dto.response.ExceptionRespDto;
-import com.parser.engine.utils.DateTimeUtils;
-
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.SecurityException;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * The type Global exception handler.
@@ -312,9 +310,10 @@ public class GlobalExceptionHandler {
 			// Access denied should return 403 FORBIDDEN
 			case "A102" -> HttpStatus.FORBIDDEN;
 
-			// User registration conflicts should return 409 CONFLICT
+			// User registration conflicts and file duplicates should return 409 CONFLICT
 			case "A115", // Username already registered
-				 "A116" // Email already registered
+				 "A116", // Email already registered
+				 "F110" // File with this name already exists
 					-> HttpStatus.CONFLICT;
 
 			// Form validation errors should return 400 BAD_REQUEST (user stays on current page)
