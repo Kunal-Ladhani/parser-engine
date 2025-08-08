@@ -9,6 +9,8 @@ import com.parser.engine.exception.ResourceDoesNotExistsException;
 import com.parser.engine.mapper.FileMapper;
 import com.parser.engine.repository.FileRepository;
 import com.parser.engine.spec.FileSpecification;
+import com.parser.engine.utils.DateTimeUtils;
+import com.parser.engine.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
-import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -58,8 +59,8 @@ public class FileDao {
 			if (Objects.nonNull(file)) {
 				if (FileProcessingStatus.COMPLETED.equals(status)) {
 					file.setIsProcessed(true);
-					file.setProcessedAt(ZonedDateTime.now());
-					file.setProcessedBy("kunalladhani@gmail.com");    // TODO: use `SecurityUtils.getCurrentLoggedInUser()`
+					file.setProcessedAt(DateTimeUtils.nowInIndia());
+					file.setProcessedBy(SecurityUtils.getLoggedInUserEmail());
 				}
 				file.setFileProcessingStatus(status);
 				fileRepository.save(file);
@@ -75,8 +76,8 @@ public class FileDao {
 			File file = this.getFileMetadataById(fileId);
 			if (Objects.nonNull(file) && !file.getIsDeleted()) {
 				file.setIsDeleted(true);
-				file.setDeletedAt(ZonedDateTime.now());
-				file.setDeletedBy("kunalladhani@gmail.com");    // TODO: use `SecurityUtils.getCurrentLoggedInUser()`
+				file.setDeletedAt(DateTimeUtils.nowInIndia());
+				file.setDeletedBy(SecurityUtils.getLoggedInUserEmail());
 				fileRepository.save(file);
 			}
 		} catch (Exception e) {
