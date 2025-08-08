@@ -1,10 +1,11 @@
 # 🏠 Parser Engine
 
-A robust Spring Boot application for parsing and processing property listing files with secure authentication, AWS S3 integration, and comprehensive property management capabilities.
+A robust Spring Boot application for parsing and processing property listing files with secure authentication, AWS S3
+integration, and comprehensive property management capabilities.
 
 ## 📋 Table of Contents
 
-- [Overview](#overview)
+- [Overview](#Overview)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Prerequisites](#prerequisites)
@@ -18,17 +19,20 @@ A robust Spring Boot application for parsing and processing property listing fil
 ## 🎯 Overview
 
 Parser Engine is a comprehensive property management system that allows users to:
+
 - Upload and process Excel files containing property data
 - Search and filter properties with advanced criteria
 - Manage user authentication with JWT tokens
 - Store files securely in AWS S3
 - Process property data with automated Excel parsing
 
-The application is built with enterprise-grade security, comprehensive validation, and follows RESTful API design principles.
+The application is built with enterprise-grade security, comprehensive validation, and follows RESTful API design
+principles.
 
 ## ✨ Features
 
 ### 🔐 Authentication & Security
+
 - **JWT-based authentication** with access tokens (15 min) and refresh tokens (3 days)
 - **Secure refresh token flow** requiring both access and refresh tokens
 - **Password validation** with strong requirements (uppercase, lowercase, digits, special characters)
@@ -37,6 +41,7 @@ The application is built with enterprise-grade security, comprehensive validatio
 - **Comprehensive error handling** with custom exception codes
 
 ### 📁 File Management
+
 - **Excel file upload** to AWS S3
 - **Automated Excel parsing** with header-based data extraction
 - **File processing status tracking** (PENDING, COMPLETED, FAILED)
@@ -45,19 +50,21 @@ The application is built with enterprise-grade security, comprehensive validatio
 - **Download files** with proper content disposition
 
 ### 🏠 Property Management
+
 - **Advanced property search** with multiple filters:
-  - BHK/RK count
-  - Location
-  - Floor
-  - Furnishing status
-  - Area
-  - Quoted amount
-  - Car parking slots
+    - BHK/RK count
+    - Location
+    - Floor
+    - Furnishing status
+    - Area
+    - Quoted amount
+    - Car parking slots
 - **Pagination support**
 - **Property data import** from Excel files
 - **Comprehensive property entity** with all necessary fields
 
 ### 🛠 Technical Features
+
 - **JPA Auditing** with automatic user tracking
 - **India timezone support** (UTC+5:30) throughout the application
 - **Comprehensive validation** across all endpoints
@@ -69,6 +76,7 @@ The application is built with enterprise-grade security, comprehensive validatio
 ## 🛠 Tech Stack
 
 ### Backend
+
 - **Java 17** with Spring Boot 3.5.3
 - **Spring Security** with JWT authentication
 - **Spring Data JPA** with Hibernate
@@ -79,11 +87,13 @@ The application is built with enterprise-grade security, comprehensive validatio
 - **Lombok** for boilerplate reduction
 
 ### Documentation & Testing
+
 - **SpringDoc OpenAPI** (Swagger UI)
 - **Spring Boot Test** with AssertJ
 - **Logback** with JSON formatting
 
 ### DevOps
+
 - **Docker** with multi-stage builds
 - **Docker Compose** for local development
 - **Maven** for dependency management
@@ -131,9 +141,9 @@ Before running this application, ensure you have:
    ```
 
 5. **Access the application**
-   - **API Base URL**: `http://localhost:8080/parser-engine`
-   - **Swagger UI**: `http://localhost:8080/parser-engine/swagger-ui/index.html`
-   - **Health Check**: `http://localhost:8080/parser-engine/actuator/health`
+    - **API Base URL**: `http://localhost:8080/parser-engine`
+    - **Swagger UI**: `http://localhost:8080/parser-engine/swagger-ui/index.html`
+    - **Health Check**: `http://localhost:8080/parser-engine/actuator/health`
 
 ### Option 2: Docker Deployment
 
@@ -152,6 +162,7 @@ Before running this application, ensure you have:
 ### Authentication Endpoints
 
 #### 🔐 Sign Up
+
 ```http
 POST /parser-engine/auth/v1/signup
 Content-Type: application/json
@@ -166,6 +177,7 @@ Content-Type: application/json
 ```
 
 #### 🔑 Login
+
 ```http
 POST /parser-engine/auth/v1/login
 Content-Type: application/json
@@ -177,6 +189,7 @@ Content-Type: application/json
 ```
 
 #### 🔄 Refresh Token
+
 ```http
 POST /parser-engine/auth/v1/refresh
 X-Refresh-Token: <refresh-token>
@@ -184,6 +197,7 @@ Authorization: Bearer <expired-access-token>
 ```
 
 #### 👤 Update Profile
+
 ```http
 PATCH /parser-engine/auth/v1/update-profile
 Authorization: Bearer <access-token>
@@ -197,6 +211,7 @@ Content-Type: application/json
 ```
 
 #### 🔒 Change Password
+
 ```http
 PATCH /parser-engine/auth/v1/change-password
 Authorization: Bearer <access-token>
@@ -209,12 +224,14 @@ Content-Type: application/json
 ```
 
 #### 🚪 Logout
+
 ```http
 POST /parser-engine/auth/v1/logout
 Authorization: Bearer <access-token>
 ```
 
 #### 🗑️ Delete Account
+
 ```http
 POST /parser-engine/auth/v1/delete-account
 Authorization: Bearer <access-token>
@@ -228,6 +245,7 @@ Content-Type: application/json
 ### File Management Endpoints
 
 #### 📤 Upload File
+
 ```http
 POST /parser-engine/wb/aws/v1/upload
 Authorization: Bearer <access-token>
@@ -237,24 +255,28 @@ file: <excel-file>
 ```
 
 #### 📥 Download File
+
 ```http
 GET /parser-engine/wb/aws/v1/download/{fileId}
 Authorization: Bearer <access-token>
 ```
 
 #### 🔍 Search Files
+
 ```http
 GET /parser-engine/wb/v1/files?fileName=properties&fileType=EXCEL&page=0&size=10
 Authorization: Bearer <access-token>
 ```
 
 #### ⚙️ Process File
+
 ```http
 POST /parser-engine/wb/v1/files/{fileId}/process
 Authorization: Bearer <access-token>
 ```
 
 #### 🗑️ Delete File
+
 ```http
 PATCH /parser-engine/wb/v1/files/{fileId}/delete
 Authorization: Bearer <access-token>
@@ -263,12 +285,14 @@ Authorization: Bearer <access-token>
 ### Property Management Endpoints
 
 #### 🔍 Search Properties
+
 ```http
 GET /parser-engine/wb/v1/properties?location=Mumbai&numberOfBhk=2&furnishingStatus=FURNISHED&page=0&size=20
 Authorization: Bearer <access-token>
 ```
 
 #### 📋 Get Property Details
+
 ```http
 GET /parser-engine/wb/v1/properties/{propertyId}
 Authorization: Bearer <access-token>
@@ -279,17 +303,18 @@ Authorization: Bearer <access-token>
 ### Environment Variables
 
 #### Development (`application-dev.yml`)
+
 ```yaml
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/property_db
-    username: root
-    password: password
-  
+    username: your-mysql-username
+    password: your-mysql-password
+
 aws:
   s3:
     region: ap-south-1
-    bucket_name: parser-engine-bucket
+    bucket_name: your-bucket-name
     access_key: your-access-key
     secret_key: your-secret-key
 
@@ -301,6 +326,7 @@ app:
 ```
 
 #### Production (`application-prod.yml`)
+
 ```yaml
 spring:
   datasource:
@@ -317,12 +343,14 @@ aws:
 ```
 
 ### JWT Configuration
+
 - **Access Token Expiration**: 15 minutes
 - **Refresh Token Expiration**: 3 days
 - **Token Prefix**: Bearer
 - **Header Name**: Authorization
 
 ### Database Configuration
+
 - **Timezone**: Asia/Kolkata (UTC+5:30)
 - **Character Set**: UTF-8
 - **Connection Pool**: HikariCP (default)
@@ -332,9 +360,9 @@ aws:
 ### AWS Deployment
 
 1. **Set up AWS resources**
-   - Create S3 bucket for file storage
-   - Configure IAM roles and permissions
-   - Set up RDS MySQL instance
+    - Create S3 bucket for file storage
+    - Configure IAM roles and permissions
+    - Set up RDS MySQL instance
 
 2. **Configure environment variables**
    ```bash
@@ -351,6 +379,7 @@ aws:
    ```
 
 ### Docker Compose Production
+
 ```yaml
 version: '3.8'
 services:
@@ -363,7 +392,7 @@ services:
       - MYSQL_URL=jdbc:mysql://db:3306/property_db
     depends_on:
       - db
-  
+
   db:
     image: mysql:8.0
     environment:
@@ -379,6 +408,7 @@ volumes:
 ## 🛠 Development
 
 ### Project Structure
+
 ```
 src/main/java/com/parser/engine/
 ├── common/           # Constants and common utilities
@@ -400,18 +430,17 @@ src/main/java/com/parser/engine/
 ```
 
 ### Running Tests
+
 ```bash
 # Run all tests
 mvn test
 
 # Run specific test class
 mvn test -Dtest=AuthControllerTest
-
-# Run with coverage
-mvn test jacoco:report
 ```
 
 ### Code Quality
+
 ```bash
 # Check code style
 mvn checkstyle:check
@@ -425,27 +454,29 @@ mvn sonar:sonar
 ### Common Issues
 
 1. **Database Connection Issues**
-   - Verify MySQL is running and accessible
-   - Check database credentials in configuration
-   - Ensure database exists: `CREATE DATABASE property_db;`
+    - Verify MySQL is running and accessible
+    - Check database credentials in configuration
+    - Ensure database exists: `CREATE DATABASE property_db;`
 
 2. **AWS S3 Issues**
-   - Verify AWS credentials are correct
-   - Check S3 bucket exists and is accessible
-   - Ensure proper IAM permissions
+    - Verify AWS credentials are correct
+    - Check S3 bucket exists and is accessible
+    - Ensure proper IAM permissions
 
 3. **JWT Token Issues**
-   - Verify JWT secret is properly configured
-   - Check token expiration settings
-   - Ensure proper Authorization header format
+    - Verify JWT secret is properly configured
+    - Check token expiration settings
+    - Ensure proper Authorization header format
 
 4. **File Upload Issues**
-   - Check file size limits (default: 10MB)
-   - Verify file format is supported (Excel files)
-   - Ensure AWS S3 bucket permissions
+    - Check file size limits (default: 10MB)
+    - Verify file format is supported (Excel files)
+    - Ensure AWS S3 bucket permissions
 
 ### Logs
+
 Application logs are configured with Logback and can be found in:
+
 - **Console**: Standard output
 - **File**: `logs/parser-engine.log` (if configured)
 - **JSON Format**: Structured logging for production
@@ -459,6 +490,7 @@ Application logs are configured with Logback and can be found in:
 5. **Open a Pull Request**
 
 ### Development Guidelines
+
 - Follow Java coding conventions
 - Write unit tests for new features
 - Update documentation for API changes
@@ -472,6 +504,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Kunal Ladhani**
+
 - Email: k.ladhani1@gmail.com
 - GitHub: [@kunal-ladhani](https://github.com/kunal-ladhani)
 - Website: [https://kunal-ladhani.github.io](https://kunal-ladhani.github.io)
@@ -485,4 +518,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Note**: This application is designed for property data parsing and management. Ensure you have proper data privacy and security measures in place when handling sensitive property information.
+**Note**: This application is designed for property data parsing and management. Ensure you have proper data privacy and
+security measures in place when handling sensitive property information.
