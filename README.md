@@ -77,7 +77,7 @@ principles.
 
 ### Backend
 
-- **Java 17** with Spring Boot 3.5.3
+- **Java 17** with Spring Boot 3.5.4
 - **Spring Security** with JWT authentication
 - **Spring Data JPA** with Hibernate
 - **MySQL 8.0** database

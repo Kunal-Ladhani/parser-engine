@@ -2,9 +2,9 @@ name: Build and Deploy Pipeline
 
 on:
   push:
-    branches: [ '*' ]  # Triggers on all branches
+    branches: [ "master" ]
   pull_request:
-    branches: [ '*' ]
+    branches: [ "master" ]
 
 env:
   AWS_REGION: ap-south-1
@@ -13,16 +13,16 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: 'maven'
+          java-version: "17"
+          distribution: "temurin"
+          cache: "maven"
 
       - name: Build with Maven
         run: mvn clean package -DskipTests
@@ -40,7 +40,7 @@ jobs:
     needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
 

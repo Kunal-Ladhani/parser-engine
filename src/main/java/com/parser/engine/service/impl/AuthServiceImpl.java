@@ -26,9 +26,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
 
 @Slf4j
 @Service
@@ -243,10 +243,26 @@ public class AuthServiceImpl implements AuthService {
 		user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
 		user.setFirstName(signupRequest.getFirstName());
 		user.setLastName(signupRequest.getLastName());
-		user.setRole(Role.USER); // Default role
 
-		log.info("Created new user entity: {}", user);
+		// Assign role based on email content
+		Role assignedRole = determineUserRole(signupRequest.getEmail());
+		user.setRole(assignedRole);
+
+		log.info("Created new user entity: {} with role: {}", user.getEmail(), assignedRole);
 		return user;
+	}
+
+	/**
+	 * Determines the user role based on email content.
+	 * If email contains "romal", "kunal" assigns ADMIN role, otherwise USER role.
+	 */
+	private Role determineUserRole(String email) {
+		if (Objects.nonNull(email) && List.of("romal", "kunal").contains(email.toLowerCase())) {
+			log.info("Email contains ADMIN NAMES assigning ADMIN role to: {}", email);
+			return Role.ADMIN;
+		}
+		log.info("Assigning default USER role to: {}", email);
+		return Role.USER;
 	}
 
 	@Override

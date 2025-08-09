@@ -24,7 +24,7 @@ COPY /target/parser-engine-1.0.0.jar /app/parser-engine.jar
 # RUN apt-get update && apt-get install -y tzdata && rm -rf /var/lib/apt/lists/*
 
 # Expose the application port
-EXPOSE 8081
+EXPOSE 8080
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "parser-engine.jar"]
