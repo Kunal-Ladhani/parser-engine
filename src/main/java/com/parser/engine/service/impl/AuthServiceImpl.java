@@ -26,7 +26,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -257,7 +256,7 @@ public class AuthServiceImpl implements AuthService {
 	 * If email contains "romal", "kunal" assigns ADMIN role, otherwise USER role.
 	 */
 	private Role determineUserRole(String email) {
-		if (Objects.nonNull(email) && List.of("romal", "kunal").contains(email.toLowerCase())) {
+		if (Objects.nonNull(email) && (email.toLowerCase().contains("romal") || email.toLowerCase().contains("kunal"))) {
 			log.info("Email contains ADMIN NAMES assigning ADMIN role to: {}", email);
 			return Role.ADMIN;
 		}
