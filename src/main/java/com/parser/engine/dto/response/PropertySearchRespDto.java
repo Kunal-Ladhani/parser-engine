@@ -51,5 +51,4 @@ public class PropertySearchRespDto {
 
 	private LocalDateTime rentalEndDate;
 
-
 }

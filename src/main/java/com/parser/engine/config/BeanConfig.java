@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.TimeZone;
 
@@ -27,7 +28,7 @@ public class BeanConfig {
 				.failOnUnknownProperties(false)
 				.defaultViewInclusion(false)
 				.timeZone(TimeZone.getTimeZone(ZoneId.of("Asia/Kolkata")))
-				.simpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+				.simpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
 				.build();
 
 		// Configure date/time serialization
@@ -40,6 +41,11 @@ public class BeanConfig {
 		SimpleModule module = new SimpleModule();
 		module.addSerializer(String.class, new NonBreakingSpaceSanitizer());
 		module.addDeserializer(String.class, new NonBreakingSpaceSanitizerDeserializer());
+
+		// register custom LocalDateTime serializers
+		module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer());
+		module.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
+
 		objectMapper.registerModule(module);
 
 		return objectMapper;

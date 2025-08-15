@@ -22,7 +22,7 @@ spring:
       time: HH:mm:ss
   jackson:
     time-zone: Asia/Kolkata
-    date-format: yyyy-MM-dd'T'HH:mm:ss.SSSZ
+    date-format: yyyy-MM-dd'T'HH:mm:ss.SSS
     deserialization:
       adjust-dates-to-context-time-zone: false
     serialization:
