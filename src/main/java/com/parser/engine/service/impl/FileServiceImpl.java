@@ -40,28 +40,33 @@ public class FileServiceImpl implements FileService {
 		this.propertyDao = propertyDao;
 	}
 
-	@Override
-	public void processExcelFile(UUID fileId) {
-
-		log.info("Starting file processing for fileId: {}", fileId);
-		// find the fileId in metadata db
-		File file = fileDao.getFileMetadataById(fileId);
-		log.info("file data: {}", file);
-
-		// check if file is marked deleted
+	private void validateFileMetadata(File file) {
+		// check if the file is marked deleted
 		if (file.getIsDeleted()) {
 			throw new ServiceException(ExceptionCode.F108, String.format(ExceptionCode.F108.getDefaultMessage(), file.getDeletedBy()));
 		}
 
-		// check if file was already processed
+		// check if the file was already processed
 		if (file.getIsProcessed()) {
 			throw new ServiceException(ExceptionCode.F109, String.format(ExceptionCode.F109.getDefaultMessage(), file.getProcessedBy()));
 		}
 
-		// check if it actually has Excel format
+		// check if it actually has an Excel format
 		if (!excelHelper.hasExcelFormat(file.getContentType())) {
 			throw new InvalidFileTypeException(ExceptionCode.F101, ExceptionCode.F101.getDefaultMessage());
 		}
+	}
+
+	@Override
+	public void processExcelFile(UUID fileId) {
+
+		log.info("Starting file processing for fileId: {}", fileId);
+
+		// find the fileId in metadata db
+		File file = fileDao.getFileMetadataById(fileId);
+		log.info("file meta data: {}", file);
+
+		validateFileMetadata(file);
 
 		try {
 			InputStreamResource resource = awsHelper.getFromS3(file.getAwsKey());
@@ -72,7 +77,7 @@ public class FileServiceImpl implements FileService {
 
 			// header-based
 			List<PropertyExcelDto> propertyExcelDtoList = excelHelper.extractDataFromExcelByHeaders(inputStream);
-			log.info("extracted by headers data: {}", propertyExcelDtoList);
+			log.info("Extracted number of rows by using headers: {}", propertyExcelDtoList.size());
 
 			// mapstruct-based
 			// List<PropertyExcelDto> excelData = excelHelper.extractDataFromExcelWithMapStruct(inputStream);

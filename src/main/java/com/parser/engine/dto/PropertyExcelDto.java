@@ -12,7 +12,7 @@ import lombok.Data;
 public class PropertyExcelDto {
 
 	// 1RK/STUDIO
-	@JsonFormat(pattern = "dd.MM.yyyy")
+	@JsonFormat(pattern = "dd.MM.yy")
 	@JsonProperty("Date added")
 	private String dateAdded;
 
@@ -40,8 +40,11 @@ public class PropertyExcelDto {
 	@JsonProperty("Comments")
 	private String comment;
 
-	@JsonProperty("Agent")
-	private String agent;
+	@JsonProperty("Agent Name")
+	private String brokerName;
+
+	@JsonProperty("Agent Contact")
+	private String brokerPhone;
 
 	// L1BHK
 	@JsonProperty("Amenities")
@@ -54,4 +57,25 @@ public class PropertyExcelDto {
 	@JsonProperty("Area in carpet")
 	private String areaInCarpet;
 
+	// my added columns
+	@JsonProperty("BHK")
+	private String numberOfBhk;
+
+	@JsonProperty("RK")
+	private String numberOfRk;
+
+	@JsonProperty("Availability")
+	private String availabilityStatus;
+
+	@JsonProperty("Listing Type")
+	private String listingType;
+
+	@JsonFormat(pattern = "dd.MM.yy")
+	@JsonProperty("Lease End Date")
+	private String leaseEndDate;
+
+	@JsonFormat(pattern = "dd.MM.yy")
+	@JsonProperty("Rental End Date")
+	private String rentalEndDate;
+	
 }

@@ -1,10 +1,11 @@
 package com.parser.engine.mapper;
 
 import com.parser.engine.dto.PropertyExcelDto;
-import com.parser.engine.dto.response.PropertyDetailRespDto;
 import com.parser.engine.dto.response.PropertySearchRespDto;
 import com.parser.engine.entity.Property;
+import com.parser.engine.enums.AvailabilityStatus;
 import com.parser.engine.enums.FurnishingStatus;
+import com.parser.engine.enums.ListingType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -19,30 +20,24 @@ public interface PropertyMapper {
 
 	PropertyMapper INSTANCE = Mappers.getMapper(PropertyMapper.class);
 
-	@Mapping(target = "buildingName", source = "buildingName")
-	@Mapping(target = "floor", source = "floor")
-	@Mapping(target = "location", source = "location")
+	//	@Mapping(target = "brokerName", source = "agent", qualifiedByName = "extractBrokerName")
+	//	@Mapping(target = "brokerPhone", source = "agent", qualifiedByName = "extractBrokerPhone")
 	@Mapping(target = "area", expression = "java(parseDouble(dto.getArea()))")
 	@Mapping(target = "quotedAmount", expression = "java(parseDouble(dto.getQuoted()))")
 	@Mapping(target = "carParkingSlots", expression = "java(parseInteger(dto.getCarPark()))")
 	@Mapping(target = "furnishingStatus", expression = "java(parseFurnishingStatus(dto.getFurniture()))")
-	@Mapping(target = "comment", source = "comment")
-	@Mapping(target = "brokerName", source = "agent", qualifiedByName = "extractBrokerName") // separate agent name and number - is it a list or single ?
-	@Mapping(target = "brokerPhone", source = "agent", qualifiedByName = "extractBrokerPhone") // separate agent name and number - is it a list or single ?
-	@Mapping(target = "availabilityStatus", constant = "AVAILABLE")
-	@Mapping(target = "listingType", ignore = true)    // populate it - is it for rent, lease or sale
-	@Mapping(target = "leaseOrRentExpiryDate", ignore = true)
-	@Mapping(target = "numberOfBhk", ignore = true)  // populate it
-	@Mapping(target = "numberOfRk", ignore = true)	// populate it
+	@Mapping(target = "availabilityStatus", expression = "java(parseAvailabilityStatus(dto.getAvailabilityStatus()))")
+	@Mapping(target = "listingType", expression = "java(parseListingType(dto.getListingType()))")
 	Property toEntity(PropertyExcelDto dto);
 
 	PropertySearchRespDto toSearchResponseDto(Property entity);
 
-	PropertyDetailRespDto toDetailResponseDto(Property entity);
+	// -------------------------- COMMON HELPER ---------------------------
 
-	// custom parsers
 	default Double parseDouble(String value) {
-		if (value == null || value.trim().isEmpty()) return null;
+		if (value == null || value.trim().isEmpty())
+			return null;
+
 		try {
 			return Double.parseDouble(value.trim());
 		} catch (NumberFormatException e) {
@@ -51,7 +46,9 @@ public interface PropertyMapper {
 	}
 
 	default Integer parseInteger(String value) {
-		if (value == null || value.trim().isEmpty()) return null;
+		if (value == null || value.trim().isEmpty())
+			return null;
+
 		try {
 			return Integer.parseInt(value.trim());
 		} catch (NumberFormatException e) {
@@ -59,8 +56,12 @@ public interface PropertyMapper {
 		}
 	}
 
+	// -------------------------- ENUM HELPER ---------------------------
+
 	default FurnishingStatus parseFurnishingStatus(String value) {
-		if (value == null) return null;
+		if (value == null || value.trim().isEmpty())
+			return FurnishingStatus.UF;
+
 		try {
 			return FurnishingStatus.valueOf(value.trim().toUpperCase());
 		} catch (IllegalArgumentException e) {
@@ -68,10 +69,35 @@ public interface PropertyMapper {
 		}
 	}
 
+	default AvailabilityStatus parseAvailabilityStatus(String value) {
+		if (value == null || value.trim().isEmpty())
+			return AvailabilityStatus.AVAILABLE;
+
+		try {
+			return AvailabilityStatus.valueOf(value.trim().toUpperCase());
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+	}
+
+	default ListingType parseListingType(String value) {
+		if (value == null || value.trim().isEmpty())
+			return ListingType.RENT;
+
+		try {
+			return ListingType.valueOf(value.trim().toUpperCase());
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+	}
+
+	// -------------------------- VALUE EXTRACTOR ---------------------------
+
 	@Named("extractBrokerPhone")
 	default String extractBrokerPhone(String agent) {
 		if (agent == null || agent.trim().isEmpty())
 			return null;
+
 		// Use regex to find 10-digit phone number
 		Pattern pattern = Pattern.compile("\\b\\d{10}\\b");
 		Matcher matcher = pattern.matcher(agent);
@@ -81,7 +107,6 @@ public interface PropertyMapper {
 		}
 
 		return null;
-
 	}
 
 	@Named("extractBrokerName")
@@ -102,4 +127,5 @@ public interface PropertyMapper {
 		// If no phone number found, return the original string trimmed
 		return agent.trim();
 	}
+
 }

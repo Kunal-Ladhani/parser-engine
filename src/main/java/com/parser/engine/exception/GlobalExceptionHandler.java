@@ -2,7 +2,6 @@ package com.parser.engine.exception;
 
 import com.parser.engine.common.ExceptionCode;
 import com.parser.engine.dto.response.ExceptionRespDto;
-import com.parser.engine.utils.DateTimeUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -23,6 +22,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+
+import java.time.LocalDateTime;
 
 /**
  * The type Global exception handler.
@@ -173,7 +174,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionRespDto> generalExceptionHandler(Exception exp, WebRequest req) {
 		log.error("General Exception occurred: {}", exp.getMessage(), exp);
 		ExceptionRespDto ExceptionRespDto = new ExceptionRespDto();
-		ExceptionRespDto.setTimestamp(DateTimeUtils.nowInIndia());
+		ExceptionRespDto.setTimestamp(LocalDateTime.now());
 		ExceptionRespDto.setErrorMessage(exp.getMessage());
 		return new ResponseEntity<>(ExceptionRespDto, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
@@ -193,7 +194,7 @@ public class GlobalExceptionHandler {
 				.map(DefaultMessageSourceResolvable::getDefaultMessage)
 				.toList();
 		ExceptionRespDto ExceptionRespDto = new ExceptionRespDto();
-		ExceptionRespDto.setTimestamp(DateTimeUtils.nowInIndia());
+		ExceptionRespDto.setTimestamp(LocalDateTime.now());
 		ExceptionRespDto.setExceptionCode(ExceptionCode.V101);
 		ExceptionRespDto.setErrorMessage(allErrors.toString());
 		return new ResponseEntity<>(ExceptionRespDto, HttpStatus.BAD_REQUEST);
@@ -203,7 +204,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionRespDto> invalidFileExceptionHandler(ServiceException exp, WebRequest req) {
 		log.error("Exception occurred: {}", exp.getMessage(), exp);
 		ExceptionRespDto ExceptionRespDto = new ExceptionRespDto();
-		ExceptionRespDto.setTimestamp(DateTimeUtils.nowInIndia());
+		ExceptionRespDto.setTimestamp(LocalDateTime.now());
 		ExceptionRespDto.setExceptionCode(exp.getExceptionCode());
 		ExceptionRespDto.setErrorMessage(exp.getMessage());
 		return new ResponseEntity<>(ExceptionRespDto, HttpStatus.NOT_ACCEPTABLE);
@@ -219,7 +220,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionRespDto> resourceDoesNotExistsExceptionHandler(ResourceDoesNotExistsException exp, WebRequest req) {
 		log.error("ResourceDoesNotExistsException occurred: {}", exp.getMessage(), exp);
 		ExceptionRespDto ExceptionRespDto = new ExceptionRespDto();
-		ExceptionRespDto.setTimestamp(DateTimeUtils.nowInIndia());
+		ExceptionRespDto.setTimestamp(LocalDateTime.now());
 		ExceptionRespDto.setExceptionCode(exp.getExceptionCode());
 		ExceptionRespDto.setErrorMessage(exp.getMessage());
 		return new ResponseEntity<>(ExceptionRespDto, HttpStatus.NOT_FOUND);
@@ -238,7 +239,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionRespDto> serviceExceptionHandler(ServiceException exp, WebRequest req) {
 		log.error("Exception occurred: {}", exp.getMessage(), exp);
 		ExceptionRespDto ExceptionRespDto = new ExceptionRespDto();
-		ExceptionRespDto.setTimestamp(DateTimeUtils.nowInIndia());
+		ExceptionRespDto.setTimestamp(LocalDateTime.now());
 		ExceptionRespDto.setExceptionCode(exp.getExceptionCode());
 		ExceptionRespDto.setErrorMessage(exp.getMessage());
 		return new ResponseEntity<>(ExceptionRespDto, HttpStatus.BAD_REQUEST);
@@ -255,7 +256,7 @@ public class GlobalExceptionHandler {
 		HttpStatus status = getHttpStatusForValidationException(exp.getExceptionCode());
 
 		ExceptionRespDto response = new ExceptionRespDto();
-		response.setTimestamp(DateTimeUtils.nowInIndia());
+		response.setTimestamp(LocalDateTime.now());
 		response.setExceptionCode(exp.getExceptionCode());
 		response.setErrorMessage(exp.getMessage());
 
@@ -269,7 +270,7 @@ public class GlobalExceptionHandler {
 	 */
 	private ExceptionRespDto createErrorResponse(ExceptionCode code, String message) {
 		ExceptionRespDto response = new ExceptionRespDto();
-		response.setTimestamp(DateTimeUtils.nowInIndia());
+		response.setTimestamp(LocalDateTime.now());
 		response.setExceptionCode(code);
 		response.setErrorMessage(message);
 		return response;

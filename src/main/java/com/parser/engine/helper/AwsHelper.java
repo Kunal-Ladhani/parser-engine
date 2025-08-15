@@ -1,11 +1,11 @@
 package com.parser.engine.helper;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.Duration;
-import java.util.Objects;
-import java.util.UUID;
-
+import com.parser.engine.dto.PreSignedUrlDto;
+import com.parser.engine.entity.File;
+import com.parser.engine.enums.FileProcessingStatus;
+import com.parser.engine.enums.FileType;
+import com.parser.engine.utils.SecurityUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,15 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.parser.engine.dto.PreSignedUrlDto;
-import com.parser.engine.entity.File;
-import com.parser.engine.enums.FileProcessingStatus;
-import com.parser.engine.enums.FileType;
-import com.parser.engine.utils.DateTimeUtils;
-import com.parser.engine.utils.SecurityUtils;
-
-import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -33,6 +24,13 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 import software.amazon.awssdk.utils.IoUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -75,7 +73,7 @@ public class AwsHelper {
 					.etag(result.eTag())
 					.bucketName(bucketName)
 					.contentType(contentType)
-					.uploadedAt(DateTimeUtils.nowInIndia())
+					.uploadedAt(LocalDateTime.now())
 					.uploadedBy(SecurityUtils.getLoggedInUserEmail())
 					.isDeleted(false)
 					.isProcessed(false)

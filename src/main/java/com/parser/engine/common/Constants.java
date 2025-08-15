@@ -25,6 +25,7 @@ public class Constants {
 
 	public static class PropertyEntity {
 
+		public static final String ID = "id";
 		public static final String BUILDING_NAME = "building_name";
 		public static final String LOCATION = "location";
 		public static final String FLOOR = "floor";
@@ -37,9 +38,11 @@ public class Constants {
 		public static final String BROKER_PHONE = "broker_phone";
 		public static final String LISTING_TYPE = "listing_type";
 		public static final String AVAILABILITY_STATUS = "availability_status";
-		public static final String TENURE_END_DATE = "tenure_end_date";
 		public static final String NUMBER_OF_BHK = "number_of_bhk";
 		public static final String NUMBER_OF_RK = "number_of_rk";
+		public static final String DATE_ADDED = "date_added";
+		public static final String LEASE_END_DATE = "lease_end_date";
+		public static final String RENTAL_END_DATE = "rental_end_date";
 
 		private PropertyEntity() {
 		}

@@ -4,9 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum FurnishingStatus {
-	UNFURNISHED("Unfurnished"),
-	SEMI_FURNISHED("Semi Furnished"),
-	FULLY_FURNISHED("Fully Furnished");
+	UF("Unfurnished"),
+	SF("Semi Furnished"),
+	FF("Fully Furnished");
 
 	private final String label;
 

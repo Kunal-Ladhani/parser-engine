@@ -1,25 +1,18 @@
 package com.parser.engine.entity;
 
-import java.time.ZonedDateTime;
-import java.util.UUID;
-
 import com.parser.engine.common.Constants;
 import com.parser.engine.common.Constants.PropertyEntity;
 import com.parser.engine.enums.AvailabilityStatus;
 import com.parser.engine.enums.FurnishingStatus;
 import com.parser.engine.enums.ListingType;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -30,7 +23,7 @@ public class Property extends Auditable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	@Column(name = Constants.FileEntity.ID, updatable = false, nullable = false)
+	@Column(name = Constants.PropertyEntity.ID, updatable = false, nullable = false)
 	private UUID id;
 
 	@Column(name = PropertyEntity.BUILDING_NAME)
@@ -78,7 +71,12 @@ public class Property extends Auditable {
 	@Column(name = PropertyEntity.AVAILABILITY_STATUS)
 	private AvailabilityStatus availabilityStatus;
 
-	@Column(name = PropertyEntity.TENURE_END_DATE)
-	private ZonedDateTime leaseOrRentExpiryDate;
+	@Column(name = PropertyEntity.DATE_ADDED)
+	private LocalDateTime dateAdded;
 
+	@Column(name = PropertyEntity.LEASE_END_DATE)
+	private LocalDateTime leaseEndDate;
+
+	@Column(name = PropertyEntity.RENTAL_END_DATE)
+	private LocalDateTime rentalEndDate;
 }
