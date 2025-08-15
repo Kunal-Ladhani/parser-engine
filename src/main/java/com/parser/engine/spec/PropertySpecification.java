@@ -20,16 +20,19 @@ public class PropertySpecification {
 
 	public static Specification<Property> withFilters(PropertySearchFilterDto propertySearchFilterDto) {
 
+		// dashboard row 1
 		String buildingName = propertySearchFilterDto.getBuildingName();
 		String location = propertySearchFilterDto.getLocation();
 		Integer numberOfBhk = CommonHelper.parseInt(propertySearchFilterDto.getNumberOfBhk());
 		Integer numberOfRk = CommonHelper.parseInt(propertySearchFilterDto.getNumberOfRk());
 
+		// dashboard row 2
 		Double area = CommonHelper.parseDouble(propertySearchFilterDto.getArea());
 		String furnishingStatusString = propertySearchFilterDto.getFurnishingStatus();
 		String floor = propertySearchFilterDto.getFloor();
 		Integer carParkingSlots = CommonHelper.parseInt(propertySearchFilterDto.getCarParkingSlots());
 
+		// dashboard row 3
 		Double quotedAmount = CommonHelper.parseDouble(propertySearchFilterDto.getQuotedAmount());
 		String listingTypeString = propertySearchFilterDto.getListingType();
 		String availabilityString = propertySearchFilterDto.getAvailabilityStatus();
