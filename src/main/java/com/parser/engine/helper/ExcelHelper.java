@@ -118,7 +118,12 @@ public class ExcelHelper {
 					if (DateUtil.isCellDateFormatted(cell)) {
 						field.set(dto, cell.getDateCellValue().toString());
 					} else {
-						field.set(dto, String.valueOf(cell.getNumericCellValue()));
+						double numericValue = cell.getNumericCellValue();
+						if (numericValue == Math.floor(numericValue) && !Double.isInfinite(numericValue)) {
+							field.set(dto, String.valueOf((long) numericValue));
+						} else {
+							field.set(dto, String.valueOf(numericValue));
+						}
 					}
 				}
 				case BOOLEAN -> field.set(dto, String.valueOf(cell.getBooleanCellValue()));

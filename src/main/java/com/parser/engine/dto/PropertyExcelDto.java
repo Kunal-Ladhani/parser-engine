@@ -13,7 +13,7 @@ public class PropertyExcelDto {
 
 	// 1RK/STUDIO
 	@JsonFormat(pattern = "dd.MM.yy")
-	@JsonProperty("Date added")
+	@JsonProperty("Date Added")
 	private String dateAdded;
 
 	@JsonProperty("Name of Building")
@@ -77,5 +77,5 @@ public class PropertyExcelDto {
 	@JsonFormat(pattern = "dd.MM.yy")
 	@JsonProperty("Rental End Date")
 	private String rentalEndDate;
-	
+
 }

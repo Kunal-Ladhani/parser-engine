@@ -45,7 +45,9 @@ public class PropertyDao {
 		List<Property> entities = propertyExcelDtoList.stream()
 				.map(propertyMapper::toEntity)
 				.collect(Collectors.toList());
+
 		log.info("List of property entities: {}", entities);
+
 		propertyRepository.saveAll(entities);
 	}
 
