@@ -2,20 +2,24 @@ package com.parser.engine.dto.filter;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.util.StringUtils;
 
 @Data
 @Builder
 public class PropertySearchFilterDto {
 
-    private String numberOfRk;
-    private String numberOfBhk;
-    private String location;
-    private String floor;
-    private String furnishingStatus;
-    private String area;
-    private String quotedAmount;
-    private String carParkingSlots;
+	private String buildingName;
+	private String location;
+	private String numberOfBhk;
+	private String numberOfRk;
+
+	private String area;
+	private String furnishingStatus;
+	private String floor;
+	private String carParkingSlots;
+
+	private String quotedAmount;
+	private String listingType;
+	private String availabilityStatus;
 
 //    public boolean isAtleastOneFilterPresent() {
 //        String builder = numberOfRk

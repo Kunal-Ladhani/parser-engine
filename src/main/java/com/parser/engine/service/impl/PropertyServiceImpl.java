@@ -5,7 +5,6 @@ import com.parser.engine.dao.PropertyDao;
 import com.parser.engine.dto.filter.PropertySearchFilterDto;
 import com.parser.engine.dto.response.PropertyDetailRespDto;
 import com.parser.engine.dto.response.PropertySearchRespDto;
-import com.parser.engine.entity.Property;
 import com.parser.engine.exception.ServiceException;
 import com.parser.engine.service.PropertyService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +30,6 @@ public class PropertyServiceImpl implements PropertyService {
 	public Page<PropertySearchRespDto> fetchPropertyList(PropertySearchFilterDto propertySearchFilterDto, Pageable pageable) {
 		try {
 			log.info("Fetching property details with the filter: {}", propertySearchFilterDto.toString());
-//            if (!propertySearchFilterDto.isAtleastOneFilterPresent()) {
-//                throw new ValidationException(ExceptionCode.V101, "No filter parameter present.");
-//            }
 
 			Page<PropertySearchRespDto> propertyDetailsRespDtoPage = propertyDao.getPropertyDetailsPageByFilter(propertySearchFilterDto, pageable);
 			log.info("Property details page by filter: {}", propertyDetailsRespDtoPage);

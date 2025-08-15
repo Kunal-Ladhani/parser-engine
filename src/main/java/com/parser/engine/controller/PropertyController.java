@@ -27,25 +27,34 @@ public class PropertyController {
 
 	@GetMapping
 	public ResponseEntity<Page<PropertySearchRespDto>> searchProperty(
+			@RequestParam(required = false) String buildingName,
+			@RequestParam(required = false) String location,
 			@RequestParam(required = false) String numberOfBhk,
 			@RequestParam(required = false) String numberOfRk,
-			@RequestParam(required = false) String location,
-			@RequestParam(required = false) String floor,
-			@RequestParam(required = false) String furnishingStatus,
+
 			@RequestParam(required = false) String area,
-			@RequestParam(required = false) String quotedAmount,
+			@RequestParam(required = false) String furnishingStatus,
+			@RequestParam(required = false) String floor,
 			@RequestParam(required = false) String carParkingSlots,
+
+			@RequestParam(required = false) String quotedAmount,
+			@RequestParam(required = false) String listingType,
+			@RequestParam(required = false) String availabilityStatus,
+
 			Pageable pageable) {
 		log.info("Received request to search property with filter");
 		PropertySearchFilterDto filter = PropertySearchFilterDto.builder()
+				.buildingName(buildingName)
+				.location(location)
 				.numberOfBhk(numberOfBhk)
 				.numberOfRk(numberOfRk)
-				.location(location)
-				.floor(floor)
-				.furnishingStatus(furnishingStatus)
 				.area(area)
-				.quotedAmount(quotedAmount)
+				.furnishingStatus(furnishingStatus)
+				.floor(floor)
 				.carParkingSlots(carParkingSlots)
+				.quotedAmount(quotedAmount)
+				.listingType(listingType)
+				.availabilityStatus(availabilityStatus)
 				.build();
 		return ResponseEntity.ok(propertyService.fetchPropertyList(filter, pageable));
 	}
