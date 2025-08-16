@@ -5,7 +5,7 @@ import com.parser.engine.enums.FileProcessingStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -51,28 +51,30 @@ public class File extends Auditable {
 
 	// -------------------------------------------------- PROCESSED --------------------------------------------
 	@Column(name = FileEntity.PROCESSED_AT)
-	private ZonedDateTime processedAt;
+	private LocalDateTime processedAt;
 
 	@Column(name = FileEntity.PROCESSED_BY)
 	private String processedBy;
 
+	@Builder.Default
 	@Column(name = FileEntity.IS_PROCESSED, columnDefinition = "BOOLEAN DEFAULT FALSE")
 	private Boolean isProcessed = false;
 
 	// --------------------------------------------------- UPLOAD --------------------------------------------
 	@Column(name = FileEntity.UPLOADED_AT)
-	private ZonedDateTime uploadedAt;
+	private LocalDateTime uploadedAt;
 
 	@Column(name = FileEntity.UPLOADED_BY)
 	private String uploadedBy;
 
 	// --------------------------------------------------- DELETE --------------------------------------------
 	@Column(name = FileEntity.DELETED_AT)
-	private ZonedDateTime deletedAt;
+	private LocalDateTime deletedAt;
 
 	@Column(name = FileEntity.DELETED_BY)
 	private String deletedBy;
 
+	@Builder.Default
 	@Column(name = FileEntity.IS_DELETED, columnDefinition = "BOOLEAN DEFAULT FALSE")
 	private Boolean isDeleted = false;
 }

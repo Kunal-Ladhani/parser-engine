@@ -9,7 +9,6 @@ import com.parser.engine.exception.ResourceDoesNotExistsException;
 import com.parser.engine.mapper.FileMapper;
 import com.parser.engine.repository.FileRepository;
 import com.parser.engine.spec.FileSpecification;
-import com.parser.engine.utils.DateTimeUtils;
 import com.parser.engine.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -59,7 +59,7 @@ public class FileDao {
 			if (Objects.nonNull(file)) {
 				if (FileProcessingStatus.COMPLETED.equals(status)) {
 					file.setIsProcessed(true);
-					file.setProcessedAt(DateTimeUtils.nowInIndia());
+					file.setProcessedAt(LocalDateTime.now());
 					file.setProcessedBy(SecurityUtils.getLoggedInUserEmail());
 				}
 				file.setFileProcessingStatus(status);
@@ -76,7 +76,7 @@ public class FileDao {
 			File file = this.getFileMetadataById(fileId);
 			if (Objects.nonNull(file) && !file.getIsDeleted()) {
 				file.setIsDeleted(true);
-				file.setDeletedAt(DateTimeUtils.nowInIndia());
+				file.setDeletedAt(LocalDateTime.now());
 				file.setDeletedBy(SecurityUtils.getLoggedInUserEmail());
 				fileRepository.save(file);
 			}

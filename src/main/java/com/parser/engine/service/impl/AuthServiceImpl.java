@@ -12,7 +12,6 @@ import com.parser.engine.repository.UserRepository;
 import com.parser.engine.service.AccountDeletionService;
 import com.parser.engine.service.AuthService;
 import com.parser.engine.service.RefreshTokenService;
-import com.parser.engine.utils.DateTimeUtils;
 import com.parser.engine.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -215,7 +215,7 @@ public class AuthServiceImpl implements AuthService {
 					.email(email)
 					.message("Logout successful")
 					.note(String.format("Access token remains valid for up to 15 minutes. %d refresh tokens revoked.", revokedTokensCount))
-					.timestamp(DateTimeUtils.nowInIndia())
+					.timestamp(LocalDateTime.now())
 					.build();
 
 		} catch (Exception e) {
@@ -230,7 +230,7 @@ public class AuthServiceImpl implements AuthService {
 					.email(email)
 					.message("Logout completed with warnings")
 					.note("Some cleanup operations failed, but user session has been cleared")
-					.timestamp(DateTimeUtils.nowInIndia())
+					.timestamp(LocalDateTime.now())
 					.build();
 		}
 	}
@@ -321,7 +321,7 @@ public class AuthServiceImpl implements AuthService {
 					.message("Account deleted successfully")
 					.username(user.getUsername())
 					.email(user.getEmail())
-					.deletedAt(DateTimeUtils.nowInIndia())
+					.deletedAt(LocalDateTime.now())
 					.refreshTokensDeleted(refreshTokensDeleted)
 					.filesDeleted(filesDeleted)
 					.propertiesDeleted(propertiesDeleted)
@@ -397,7 +397,7 @@ public class AuthServiceImpl implements AuthService {
 				.firstName(updatedUser.getFirstName())
 				.lastName(updatedUser.getLastName())
 				.role(updatedUser.getRole().name())
-				.updatedAt(DateTimeUtils.nowInIndia())
+				.updatedAt(LocalDateTime.now())
 				.build();
 	}
 
@@ -453,7 +453,7 @@ public class AuthServiceImpl implements AuthService {
 					.username(user.getUsername())
 					.email(user.getEmail())
 					.refreshTokensRevoked(revokedTokensCount)
-					.changedAt(DateTimeUtils.nowInIndia())
+					.changedAt(LocalDateTime.now())
 					.securityNote("All sessions have been terminated. Please log in again with your new password.")
 					.build();
 

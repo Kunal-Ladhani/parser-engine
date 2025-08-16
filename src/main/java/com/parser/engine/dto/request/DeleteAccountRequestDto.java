@@ -29,6 +29,9 @@ public class DeleteAccountRequestDto {
 	)
 	private String confirmationText;
 
+	@Builder.Default
 	private boolean deleteAllData = false; // Delete files and properties
+
+	@Builder.Default
 	private boolean anonymizeData = false; // Keep data but remove user references
 }

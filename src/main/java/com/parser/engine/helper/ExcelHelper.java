@@ -5,7 +5,6 @@ import com.parser.engine.common.Constants;
 import com.parser.engine.common.ExceptionCode;
 import com.parser.engine.dto.PropertyExcelDto;
 import com.parser.engine.exception.InvalidFileContentException;
-import com.parser.engine.mapper.ExcelRowMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -13,7 +12,6 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -21,82 +19,18 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.*;
 
-/**
- * @author Kunal Ladhani
- * @since v1.0
- */
 @Slf4j
 @Component
 public class ExcelHelper {
-
-	private final ExcelRowMapper excelRowMapper;
-
-	@Autowired
-	public ExcelHelper(ExcelRowMapper excelRowMapper) {
-		this.excelRowMapper = excelRowMapper;
-	}
 
 	public Boolean hasExcelFormat(String contentType) {
 		return Constants.EXCEL_SUPPORTED_TYPES.contains(contentType);
 	}
 
-	// ----------------------------------- POSITION BASED IMPL ---------------------------------------
-
-	/**
-	 * Extracts data from Excel file using row position for mapping
-	 *
-	 * @param inputStream Excel file input stream
-	 * @return List of PropertyExcelDto objects mapped from Excel data
-	 */
-	public List<PropertyExcelDto> extractDataFromExcel(InputStream inputStream) {
-		List<PropertyExcelDto> rawData = new ArrayList<>();
-		try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook(inputStream)) {
-			// int numberOfSheets = xssfWorkbook.getNumberOfSheets();
-
-			XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
-			int rowIndex = 0;
-			for (Row row : sheet) {
-				// Skip header row
-				if (rowIndex == 0) {
-					rowIndex++;
-					continue;
-				}
-
-				// Iterate over cells in other row
-				Iterator<Cell> cellIterator = row.iterator();
-				int cellIndex = 0;
-				PropertyExcelDto propertyExcelDto = new PropertyExcelDto();
-				while (cellIterator.hasNext()) {
-					Cell cell = cellIterator.next();
-
-					switch (cellIndex) {
-//                        case 0 ->
-//                            propertyExcelDto.setCustomerId((int) cell.getNumericCellValue());
-//                        case 1 ->
-//                            propertyExcelDto.setFirstName(cell.getStringCellValue());
-//                        case 2 ->
-//                            propertyExcelDto.setLastName(cell.getStringCellValue());
-//                        case 3 ->
-//                            propertyExcelDto.setCountry(cell.getStringCellValue());
-//                        case 4 ->
-//                            propertyExcelDto.setTelephone((int) cell.getNumericCellValue());
-//                        default -> {
-//                        }
-					}
-					cellIndex++;
-				}
-				rawData.add(propertyExcelDto);
-			}
-		} catch (IOException e) {
-			throw new InvalidFileContentException(ExceptionCode.F103, ExceptionCode.F103.getDefaultMessage() + e.getMessage());
-		}
-		return rawData;
-	}
-
 	// ----------------------------------- HEADER BASED IMPL ---------------------------------------
 
 	/**
-	 * Extracts data from Excel file using header names for mapping
+	 * Extracts data from the excel file using header names for mapping
 	 *
 	 * @param inputStream Excel file input stream
 	 * @return List of PropertyExcelDto objects mapped from Excel data
@@ -184,7 +118,12 @@ public class ExcelHelper {
 					if (DateUtil.isCellDateFormatted(cell)) {
 						field.set(dto, cell.getDateCellValue().toString());
 					} else {
-						field.set(dto, String.valueOf(cell.getNumericCellValue()));
+						double numericValue = cell.getNumericCellValue();
+						if (numericValue == Math.floor(numericValue) && !Double.isInfinite(numericValue)) {
+							field.set(dto, String.valueOf((long) numericValue));
+						} else {
+							field.set(dto, String.valueOf(numericValue));
+						}
 					}
 				}
 				case BOOLEAN -> field.set(dto, String.valueOf(cell.getBooleanCellValue()));
@@ -212,32 +151,4 @@ public class ExcelHelper {
 		return true;
 	}
 
-	// ---------------------------------- MAPSTRUCT IMPL ---------------------------------------
-
-	/**
-	 * Extracts data from an Excel file using MapStruct for mapping
-	 *
-	 * @param inputStream Excel file input stream
-	 * @return List of PropertyExcelDto objects mapped from Excel data
-	 */
-	public List<PropertyExcelDto> extractDataFromExcelWithMapStruct(InputStream inputStream) {
-		List<PropertyExcelDto> rawData = new ArrayList<>();
-		try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook(inputStream)) {
-			XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
-
-			// Skip header row and process data rows
-			for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
-				Row row = sheet.getRow(rowIndex);
-				if (Objects.isNull(row)) {
-					continue;
-				}
-
-				PropertyExcelDto dto = excelRowMapper.rowToDto(row);
-				rawData.add(dto);
-			}
-		} catch (IOException e) {
-			throw new InvalidFileContentException(ExceptionCode.F103, ExceptionCode.F103.getDefaultMessage() + e.getMessage());
-		}
-		return rawData;
-	}
 }

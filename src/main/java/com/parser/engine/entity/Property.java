@@ -1,25 +1,18 @@
 package com.parser.engine.entity;
 
-import java.time.ZonedDateTime;
-import java.util.UUID;
-
 import com.parser.engine.common.Constants;
 import com.parser.engine.common.Constants.PropertyEntity;
 import com.parser.engine.enums.AvailabilityStatus;
 import com.parser.engine.enums.FurnishingStatus;
 import com.parser.engine.enums.ListingType;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -30,8 +23,10 @@ public class Property extends Auditable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	@Column(name = Constants.FileEntity.ID, updatable = false, nullable = false)
+	@Column(name = Constants.PropertyEntity.ID, updatable = false, nullable = false)
 	private UUID id;
+
+	// --------------------------  EXCEL FILE FIELDS --------------------------------
 
 	@Column(name = PropertyEntity.BUILDING_NAME)
 	private String buildingName;
@@ -78,7 +73,51 @@ public class Property extends Auditable {
 	@Column(name = PropertyEntity.AVAILABILITY_STATUS)
 	private AvailabilityStatus availabilityStatus;
 
-	@Column(name = PropertyEntity.TENURE_END_DATE)
-	private ZonedDateTime leaseOrRentExpiryDate;
+	@Column(name = PropertyEntity.DATE_ADDED)
+	private LocalDateTime dateAdded;
+
+	@Column(name = PropertyEntity.LEASE_END_DATE)
+	private LocalDateTime leaseEndDate;
+
+	@Column(name = PropertyEntity.RENTAL_END_DATE)
+	private LocalDateTime rentalEndDate;
+
+	// --------------------------  DASHBOARD BUTTON FIELDS --------------------------------
+
+	@Column(name = PropertyEntity.LEASED_ON)
+	private LocalDateTime leasedOn;
+
+	@Column(name = PropertyEntity.LEASED_BY)
+	private String leasedBy;
+
+	@Column(name = PropertyEntity.LEASED_TO)
+	private String leasedTo;
+
+	@Column(name = PropertyEntity.LEASED_FOR_AMOUNT)
+	private Double leasedForAmount;
+
+	@Column(name = PropertyEntity.RENTED_ON)
+	private LocalDateTime rentedOn;
+
+	@Column(name = PropertyEntity.RENTED_BY)
+	private String rentedBy;
+
+	@Column(name = PropertyEntity.RENTED_TO)
+	private String rentedTo;
+
+	@Column(name = PropertyEntity.RENTED_FOR_AMOUNT)
+	private Double rentedForAmount;
+
+	@Column(name = PropertyEntity.SOLD_ON)
+	private LocalDateTime soldOn;
+
+	@Column(name = PropertyEntity.SOLD_BY)
+	private String soldBy;
+
+	@Column(name = PropertyEntity.SOLD_TO)
+	private String soldTo;
+
+	@Column(name = PropertyEntity.SOLD_FOR_AMOUNT)
+	private Double soldForAmount;
 
 }

@@ -25,6 +25,8 @@ public class Constants {
 
 	public static class PropertyEntity {
 
+		public static final String ID = "id";
+
 		public static final String BUILDING_NAME = "building_name";
 		public static final String LOCATION = "location";
 		public static final String FLOOR = "floor";
@@ -37,9 +39,26 @@ public class Constants {
 		public static final String BROKER_PHONE = "broker_phone";
 		public static final String LISTING_TYPE = "listing_type";
 		public static final String AVAILABILITY_STATUS = "availability_status";
-		public static final String TENURE_END_DATE = "tenure_end_date";
 		public static final String NUMBER_OF_BHK = "number_of_bhk";
 		public static final String NUMBER_OF_RK = "number_of_rk";
+		public static final String DATE_ADDED = "date_added";
+		public static final String LEASE_END_DATE = "lease_end_date";
+		public static final String RENTAL_END_DATE = "rental_end_date";
+
+		public static final String LEASED_ON = "leased_on";
+		public static final String LEASED_BY = "leased_by";
+		public static final String LEASED_TO = "leased_to";
+		public static final String LEASED_FOR_AMOUNT = "leased_for_amount";
+
+		public static final String RENTED_ON = "rented_on";
+		public static final String RENTED_BY = "rented_by";
+		public static final String RENTED_TO = "rented_to";
+		public static final String RENTED_FOR_AMOUNT = "rented_for_amount";
+
+		public static final String SOLD_ON = "sold_on";
+		public static final String SOLD_BY = "sold_by";
+		public static final String SOLD_TO = "sold_to";
+		public static final String SOLD_FOR_AMOUNT = "sold_for_amount";
 
 		private PropertyEntity() {
 		}

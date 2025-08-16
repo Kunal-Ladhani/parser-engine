@@ -3,10 +3,12 @@ package com.parser.engine.service.impl;
 import com.parser.engine.common.ExceptionCode;
 import com.parser.engine.dao.PropertyDao;
 import com.parser.engine.dto.filter.PropertySearchFilterDto;
+import com.parser.engine.dto.request.PropertyDetailsUpdateReqDto;
+import com.parser.engine.dto.request.PropertyStatusUpdateReqDto;
 import com.parser.engine.dto.response.PropertyDetailRespDto;
 import com.parser.engine.dto.response.PropertySearchRespDto;
-import com.parser.engine.entity.Property;
 import com.parser.engine.exception.ServiceException;
+import com.parser.engine.exception.ValidationException;
 import com.parser.engine.service.PropertyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -31,9 +34,6 @@ public class PropertyServiceImpl implements PropertyService {
 	public Page<PropertySearchRespDto> fetchPropertyList(PropertySearchFilterDto propertySearchFilterDto, Pageable pageable) {
 		try {
 			log.info("Fetching property details with the filter: {}", propertySearchFilterDto.toString());
-//            if (!propertySearchFilterDto.isAtleastOneFilterPresent()) {
-//                throw new ValidationException(ExceptionCode.V101, "No filter parameter present.");
-//            }
 
 			Page<PropertySearchRespDto> propertyDetailsRespDtoPage = propertyDao.getPropertyDetailsPageByFilter(propertySearchFilterDto, pageable);
 			log.info("Property details page by filter: {}", propertyDetailsRespDtoPage);
@@ -48,5 +48,35 @@ public class PropertyServiceImpl implements PropertyService {
 	@Override
 	public PropertyDetailRespDto fetchPropertyDetail(UUID propertyId) {
 		return propertyDao.getPropertyDetailById(propertyId);
+	}
+
+	@Override
+	public PropertyDetailRespDto updatePropertyDetail(UUID propertyId, PropertyDetailsUpdateReqDto updateRequest) {
+		try {
+			log.info("Property update request received for propertyId: {} with data: {}", propertyId, updateRequest);
+			// Validate that at least one field is provided
+			if (!updateRequest.hasAnyField()) {
+				throw new ValidationException(ExceptionCode.N101, "At least one field must be provided for update");
+			}
+			return propertyDao.updateProperty(propertyId, updateRequest);
+		} catch (Exception e) {
+			log.error("Error occurred while updating property with id {}: {}", propertyId, e.getMessage());
+			throw new ServiceException(ExceptionCode.P103, "Property update failed: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public PropertyDetailRespDto updatePropertyStatus(UUID propertyId, PropertyStatusUpdateReqDto statusUpdateRequest) {
+		try {
+			log.info("Property status update request received for propertyId: {} with data: {}", propertyId, statusUpdateRequest);
+			// Validate that availability status is provided
+			if (Objects.isNull(statusUpdateRequest.getAvailabilityStatus())) {
+				throw new ValidationException(ExceptionCode.N101, "Availability status must be provided for status update");
+			}
+			return propertyDao.updatePropertyStatus(propertyId, statusUpdateRequest);
+		} catch (Exception e) {
+			log.error("Error occurred while updating property status with id {}: {}", propertyId, e.getMessage());
+			throw new ServiceException(ExceptionCode.P103, "Property status update failed: " + e.getMessage());
+		}
 	}
 }

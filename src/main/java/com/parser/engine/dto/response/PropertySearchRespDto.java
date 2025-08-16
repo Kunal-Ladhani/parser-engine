@@ -45,6 +45,10 @@ public class PropertySearchRespDto {
 
 	private AvailabilityStatus availabilityStatus;
 
-	private LocalDateTime leaseOrRentExpiryDate;
+	private LocalDateTime dateAdded;
+
+	private LocalDateTime leaseEndDate;
+
+	private LocalDateTime rentalEndDate;
 
 }
