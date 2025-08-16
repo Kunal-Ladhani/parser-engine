@@ -1,6 +1,7 @@
 package com.parser.engine.controller;
 
 import com.parser.engine.dto.filter.PropertySearchFilterDto;
+import com.parser.engine.dto.request.PropertyDetailsUpdateReqDto;
 import com.parser.engine.dto.response.PropertyDetailRespDto;
 import com.parser.engine.dto.response.PropertySearchRespDto;
 import com.parser.engine.service.PropertyService;
@@ -63,6 +64,13 @@ public class PropertyController {
 	public ResponseEntity<PropertyDetailRespDto> getPropertyDetails(@PathVariable UUID propertyId) {
 		log.info("Received request to get details for property with id: {}", propertyId);
 		return ResponseEntity.ok(propertyService.fetchPropertyDetail(propertyId));
+	}
+
+	@PatchMapping("/{propertyId}")
+	public ResponseEntity<PropertyDetailRespDto> updatePropertyDetails(@PathVariable UUID propertyId, @RequestBody PropertyDetailsUpdateReqDto propertyDetailsUpdateReqDto) {
+		log.info("Received request to update details for property with id: {}", propertyId);
+		PropertyDetailRespDto updatedProperty = propertyService.updatePropertyDetail(propertyId, propertyDetailsUpdateReqDto);
+		return ResponseEntity.ok(updatedProperty);
 	}
 
 }

@@ -27,7 +27,7 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      # Store the build artifacts for potential use in the deploy job
+      # Store the build artifacts for potential use in the deployment job
       - name: Upload build artifacts
         if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v4
