@@ -1,14 +1,14 @@
 package com.parser.engine.service;
 
-import java.util.UUID;
-
+import com.parser.engine.dto.filter.PropertySearchFilterDto;
+import com.parser.engine.dto.request.PropertyDetailsUpdateReqDto;
+import com.parser.engine.dto.request.PropertyStatusUpdateReqDto;
+import com.parser.engine.dto.response.PropertyDetailRespDto;
+import com.parser.engine.dto.response.PropertySearchRespDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.parser.engine.dto.filter.PropertySearchFilterDto;
-import com.parser.engine.dto.request.PropertyDetailsUpdateReqDto;
-import com.parser.engine.dto.response.PropertyDetailRespDto;
-import com.parser.engine.dto.response.PropertySearchRespDto;
+import java.util.UUID;
 
 public interface PropertyService {
 
@@ -17,5 +17,7 @@ public interface PropertyService {
 	PropertyDetailRespDto fetchPropertyDetail(UUID propertyId);
 
 	PropertyDetailRespDto updatePropertyDetail(UUID propertyId, PropertyDetailsUpdateReqDto updateRequest);
+
+	PropertyDetailRespDto updatePropertyStatus(UUID propertyId, PropertyStatusUpdateReqDto statusUpdateRequest);
 
 }

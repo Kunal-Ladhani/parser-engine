@@ -4,6 +4,7 @@ import com.parser.engine.common.ExceptionCode;
 import com.parser.engine.dao.PropertyDao;
 import com.parser.engine.dto.filter.PropertySearchFilterDto;
 import com.parser.engine.dto.request.PropertyDetailsUpdateReqDto;
+import com.parser.engine.dto.request.PropertyStatusUpdateReqDto;
 import com.parser.engine.dto.response.PropertyDetailRespDto;
 import com.parser.engine.dto.response.PropertySearchRespDto;
 import com.parser.engine.exception.ServiceException;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -60,6 +62,21 @@ public class PropertyServiceImpl implements PropertyService {
 		} catch (Exception e) {
 			log.error("Error occurred while updating property with id {}: {}", propertyId, e.getMessage());
 			throw new ServiceException(ExceptionCode.P103, "Property update failed: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public PropertyDetailRespDto updatePropertyStatus(UUID propertyId, PropertyStatusUpdateReqDto statusUpdateRequest) {
+		try {
+			log.info("Property status update request received for propertyId: {} with data: {}", propertyId, statusUpdateRequest);
+			// Validate that availability status is provided
+			if (Objects.isNull(statusUpdateRequest.getAvailabilityStatus())) {
+				throw new ValidationException(ExceptionCode.N101, "Availability status must be provided for status update");
+			}
+			return propertyDao.updatePropertyStatus(propertyId, statusUpdateRequest);
+		} catch (Exception e) {
+			log.error("Error occurred while updating property status with id {}: {}", propertyId, e.getMessage());
+			throw new ServiceException(ExceptionCode.P103, "Property status update failed: " + e.getMessage());
 		}
 	}
 }

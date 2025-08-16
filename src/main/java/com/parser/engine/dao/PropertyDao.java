@@ -1,18 +1,11 @@
 package com.parser.engine.dao;
 
-import com.parser.engine.common.ExceptionCode;
-import com.parser.engine.dto.PropertyExcelDto;
-import com.parser.engine.dto.filter.PropertySearchFilterDto;
-import com.parser.engine.dto.request.PropertyDetailsUpdateReqDto;
-import com.parser.engine.dto.response.PropertyDetailRespDto;
-import com.parser.engine.dto.response.PropertySearchRespDto;
-import com.parser.engine.entity.Property;
-import com.parser.engine.exception.ResourceDoesNotExistsException;
-import com.parser.engine.exception.ValidationException;
-import com.parser.engine.mapper.PropertyMapper;
-import com.parser.engine.repository.PropertyRepository;
-import com.parser.engine.spec.PropertySpecification;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,10 +14,22 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import com.parser.engine.common.ExceptionCode;
+import com.parser.engine.dto.PropertyExcelDto;
+import com.parser.engine.dto.filter.PropertySearchFilterDto;
+import com.parser.engine.dto.request.PropertyDetailsUpdateReqDto;
+import com.parser.engine.dto.request.PropertyStatusUpdateReqDto;
+import com.parser.engine.dto.response.PropertyDetailRespDto;
+import com.parser.engine.dto.response.PropertySearchRespDto;
+import com.parser.engine.entity.Property;
+import com.parser.engine.enums.AvailabilityStatus;
+import com.parser.engine.exception.ResourceDoesNotExistsException;
+import com.parser.engine.exception.ValidationException;
+import com.parser.engine.mapper.PropertyMapper;
+import com.parser.engine.repository.PropertyRepository;
+import com.parser.engine.spec.PropertySpecification;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -195,6 +200,86 @@ public class PropertyDao {
 
 		// Return updated property details
 		return modelMapper.map(updatedProperty, PropertyDetailRespDto.class);
+	}
+
+	@Transactional
+	public PropertyDetailRespDto updatePropertyStatus(UUID propertyId, PropertyStatusUpdateReqDto statusUpdateRequest) {
+		log.info("Updating property status with id: {}", propertyId);
+
+		// Find the existing property
+		Property existingProperty = propertyRepository.findById(propertyId)
+				.orElseThrow(() -> new ResourceDoesNotExistsException(ExceptionCode.P102, ExceptionCode.P102.getDefaultMessage() + propertyId));
+
+		AvailabilityStatus newStatus = statusUpdateRequest.getAvailabilityStatus();
+		AvailabilityStatus currentStatus = existingProperty.getAvailabilityStatus();
+
+		if (newStatus.equals(currentStatus)) {
+			throw new ValidationException(ExceptionCode.N101, "Availability status same as previous status.");
+		}
+
+		// Clear all status-specific fields first
+		clearStatusFields(existingProperty);
+
+		// Update availability status
+		existingProperty.setAvailabilityStatus(newStatus);
+
+		// Set appropriate fields based on the new status
+		switch (newStatus) {
+			case LEASED:
+				existingProperty.setLeasedOn(Objects.nonNull(statusUpdateRequest.getLeasedOn()) ? statusUpdateRequest.getLeasedOn() : LocalDateTime.now());
+				existingProperty.setLeasedBy(statusUpdateRequest.getLeasedBy());
+				existingProperty.setLeasedTo(statusUpdateRequest.getLeasedTo());
+				existingProperty.setLeasedForAmount(statusUpdateRequest.getLeasedForAmount());
+				break;
+
+			case RENTED:
+				existingProperty.setRentedOn(Objects.nonNull(statusUpdateRequest.getRentedOn()) ? statusUpdateRequest.getRentedOn() : LocalDateTime.now());
+				existingProperty.setRentedBy(statusUpdateRequest.getRentedBy());
+				existingProperty.setRentedTo(statusUpdateRequest.getRentedTo());
+				existingProperty.setRentedForAmount(statusUpdateRequest.getRentedForAmount());
+				break;
+
+			case SOLD:
+				existingProperty.setSoldOn(Objects.nonNull(statusUpdateRequest.getSoldOn()) ? statusUpdateRequest.getSoldOn() : LocalDateTime.now());
+				existingProperty.setSoldBy(statusUpdateRequest.getSoldBy());
+				existingProperty.setSoldTo(statusUpdateRequest.getSoldTo());
+				existingProperty.setSoldForAmount(statusUpdateRequest.getSoldForAmount());
+				break;
+
+			case AVAILABLE:
+				// For AVAILABLE status, all tracking fields remain null (already cleared above)
+				break;
+
+			default:
+				throw new ValidationException(ExceptionCode.N101, "Invalid availability status: " + newStatus);
+		}
+
+		// Save updated property
+		Property updatedProperty = propertyRepository.save(existingProperty);
+		log.info("Property status updated successfully: {}", updatedProperty);
+
+		// Return updated property details
+		return modelMapper.map(updatedProperty, PropertyDetailRespDto.class);
+	}
+
+	private void clearStatusFields(Property property) {
+		// Clear LEASED fields
+		property.setLeasedOn(null);
+		property.setLeasedBy(null);
+		property.setLeasedTo(null);
+		property.setLeasedForAmount(null);
+
+		// Clear RENTED fields
+		property.setRentedOn(null);
+		property.setRentedBy(null);
+		property.setRentedTo(null);
+		property.setRentedForAmount(null);
+
+		// Clear SOLD fields
+		property.setSoldOn(null);
+		property.setSoldBy(null);
+		property.setSoldTo(null);
+		property.setSoldForAmount(null);
 	}
 
 }

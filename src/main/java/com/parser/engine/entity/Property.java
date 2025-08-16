@@ -26,6 +26,8 @@ public class Property extends Auditable {
 	@Column(name = Constants.PropertyEntity.ID, updatable = false, nullable = false)
 	private UUID id;
 
+	// --------------------------  EXCEL FILE FIELDS --------------------------------
+
 	@Column(name = PropertyEntity.BUILDING_NAME)
 	private String buildingName;
 
@@ -79,4 +81,43 @@ public class Property extends Auditable {
 
 	@Column(name = PropertyEntity.RENTAL_END_DATE)
 	private LocalDateTime rentalEndDate;
+
+	// --------------------------  DASHBOARD BUTTON FIELDS --------------------------------
+
+	@Column(name = PropertyEntity.LEASED_ON)
+	private LocalDateTime leasedOn;
+
+	@Column(name = PropertyEntity.LEASED_BY)
+	private String leasedBy;
+
+	@Column(name = PropertyEntity.LEASED_TO)
+	private String leasedTo;
+
+	@Column(name = PropertyEntity.LEASED_FOR_AMOUNT)
+	private Double leasedForAmount;
+
+	@Column(name = PropertyEntity.RENTED_ON)
+	private LocalDateTime rentedOn;
+
+	@Column(name = PropertyEntity.RENTED_BY)
+	private String rentedBy;
+
+	@Column(name = PropertyEntity.RENTED_TO)
+	private String rentedTo;
+
+	@Column(name = PropertyEntity.RENTED_FOR_AMOUNT)
+	private Double rentedForAmount;
+
+	@Column(name = PropertyEntity.SOLD_ON)
+	private LocalDateTime soldOn;
+
+	@Column(name = PropertyEntity.SOLD_BY)
+	private String soldBy;
+
+	@Column(name = PropertyEntity.SOLD_TO)
+	private String soldTo;
+
+	@Column(name = PropertyEntity.SOLD_FOR_AMOUNT)
+	private Double soldForAmount;
+
 }
