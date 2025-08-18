@@ -1,6 +1,7 @@
 package com.parser.engine.controller;
 
 import com.parser.engine.dto.filter.PropertySearchFilterDto;
+import com.parser.engine.dto.request.PropertyCreateReqDto;
 import com.parser.engine.dto.request.PropertyDetailsUpdateReqDto;
 import com.parser.engine.dto.request.PropertyStatusUpdateReqDto;
 import com.parser.engine.dto.response.PropertyDetailRespDto;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +27,13 @@ public class PropertyController {
 	@Autowired
 	public PropertyController(PropertyService propertyService) {
 		this.propertyService = propertyService;
+	}
+
+	@PostMapping
+	public ResponseEntity<PropertyDetailRespDto> createProperty(@RequestBody PropertyCreateReqDto propertyCreateReqDto) {
+		log.info("Received request to create new property with data: {}", propertyCreateReqDto);
+		PropertyDetailRespDto createdProperty = propertyService.createProperty(propertyCreateReqDto);
+		return new ResponseEntity<>(createdProperty, HttpStatus.CREATED);
 	}
 
 	@GetMapping

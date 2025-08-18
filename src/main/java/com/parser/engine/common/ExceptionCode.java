@@ -51,7 +51,8 @@ public enum ExceptionCode {
 	// Properties related errors
 	P101("P101", "Error while searching for properties"),
 	P102("P102", "Property details not found for property Id: "),
-	P103("P103", "Property details update failed for property Id: "),
+	P103("P103", "Property details update failed: "),
+	P104("P104", "Property creation failed: "),
 
 	S102("S102", "Service temporarily unavailable"),
 

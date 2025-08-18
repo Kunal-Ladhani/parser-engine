@@ -3,6 +3,7 @@ package com.parser.engine.service.impl;
 import com.parser.engine.common.ExceptionCode;
 import com.parser.engine.dao.PropertyDao;
 import com.parser.engine.dto.filter.PropertySearchFilterDto;
+import com.parser.engine.dto.request.PropertyCreateReqDto;
 import com.parser.engine.dto.request.PropertyDetailsUpdateReqDto;
 import com.parser.engine.dto.request.PropertyStatusUpdateReqDto;
 import com.parser.engine.dto.response.PropertyDetailRespDto;
@@ -61,7 +62,7 @@ public class PropertyServiceImpl implements PropertyService {
 			return propertyDao.updateProperty(propertyId, updateRequest);
 		} catch (Exception e) {
 			log.error("Error occurred while updating property with id {}: {}", propertyId, e.getMessage());
-			throw new ServiceException(ExceptionCode.P103, "Property update failed: " + e.getMessage());
+			throw new ServiceException(ExceptionCode.P103, ExceptionCode.P103.getDefaultMessage() + e.getMessage());
 		}
 	}
 
@@ -76,7 +77,26 @@ public class PropertyServiceImpl implements PropertyService {
 			return propertyDao.updatePropertyStatus(propertyId, statusUpdateRequest);
 		} catch (Exception e) {
 			log.error("Error occurred while updating property status with id {}: {}", propertyId, e.getMessage());
-			throw new ServiceException(ExceptionCode.P103, "Property status update failed: " + e.getMessage());
+			throw new ServiceException(ExceptionCode.P103, ExceptionCode.P103.getDefaultMessage() + e.getMessage());
+		}
+	}
+
+	@Override
+	public PropertyDetailRespDto createProperty(PropertyCreateReqDto createRequest) {
+		try {
+			log.info("Property creation request received with data: {}", createRequest);
+			// Validate that required fields are provided
+			if (!createRequest.hasRequiredFields()) {
+				String errorMessage = createRequest.getValidationErrorMessage();
+				throw new ValidationException(ExceptionCode.N101, errorMessage != null ? errorMessage : "Required fields are missing");
+			}
+			return propertyDao.createProperty(createRequest);
+		} catch (ValidationException e) {
+			log.error("Validation error during property creation: {}", e.getMessage());
+			throw e;
+		} catch (Exception e) {
+			log.error("Error occurred while creating property: {}", e.getMessage());
+			throw new ServiceException(ExceptionCode.P104, ExceptionCode.P104.getDefaultMessage() + e.getMessage());
 		}
 	}
 }
