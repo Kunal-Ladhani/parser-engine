@@ -1,6 +1,7 @@
 package com.parser.engine.service;
 
 import com.parser.engine.dto.filter.PropertySearchFilterDto;
+import com.parser.engine.dto.request.PropertyCreateReqDto;
 import com.parser.engine.dto.request.PropertyDetailsUpdateReqDto;
 import com.parser.engine.dto.request.PropertyStatusUpdateReqDto;
 import com.parser.engine.dto.response.PropertyDetailRespDto;
@@ -19,5 +20,7 @@ public interface PropertyService {
 	PropertyDetailRespDto updatePropertyDetail(UUID propertyId, PropertyDetailsUpdateReqDto updateRequest);
 
 	PropertyDetailRespDto updatePropertyStatus(UUID propertyId, PropertyStatusUpdateReqDto statusUpdateRequest);
+
+	PropertyDetailRespDto createProperty(PropertyCreateReqDto createRequest);
 
 }

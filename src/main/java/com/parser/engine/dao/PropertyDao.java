@@ -1,22 +1,9 @@
 package com.parser.engine.dao;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.parser.engine.common.ExceptionCode;
 import com.parser.engine.dto.PropertyExcelDto;
 import com.parser.engine.dto.filter.PropertySearchFilterDto;
+import com.parser.engine.dto.request.PropertyCreateReqDto;
 import com.parser.engine.dto.request.PropertyDetailsUpdateReqDto;
 import com.parser.engine.dto.request.PropertyStatusUpdateReqDto;
 import com.parser.engine.dto.response.PropertyDetailRespDto;
@@ -28,8 +15,20 @@ import com.parser.engine.exception.ValidationException;
 import com.parser.engine.mapper.PropertyMapper;
 import com.parser.engine.repository.PropertyRepository;
 import com.parser.engine.spec.PropertySpecification;
-
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -280,6 +279,49 @@ public class PropertyDao {
 		property.setSoldBy(null);
 		property.setSoldTo(null);
 		property.setSoldForAmount(null);
+	}
+
+	@Transactional
+	public PropertyDetailRespDto createProperty(PropertyCreateReqDto createRequest) {
+		log.info("Creating new property with data: {}", createRequest);
+
+		// Create new Property entity
+		Property newProperty = new Property();
+
+		// Set basic property details
+		newProperty.setBuildingName(createRequest.getBuildingName());
+		newProperty.setLocation(createRequest.getLocation());
+		newProperty.setFloor(createRequest.getFloor());
+		newProperty.setNumberOfBhk(createRequest.getNumberOfBhk());
+		newProperty.setNumberOfRk(createRequest.getNumberOfRk());
+		newProperty.setFurnishingStatus(createRequest.getFurnishingStatus());
+		newProperty.setArea(createRequest.getArea());
+		newProperty.setQuotedAmount(createRequest.getQuotedAmount());
+		newProperty.setCarParkingSlots(createRequest.getCarParkingSlots());
+		newProperty.setComment(createRequest.getComment());
+
+		// Set broker details
+		newProperty.setBrokerName(createRequest.getBrokerName());
+		newProperty.setBrokerPhone(createRequest.getBrokerPhone());
+
+		// Set property type and status
+		newProperty.setListingType(createRequest.getListingType());
+		newProperty.setAvailabilityStatus(createRequest.getAvailabilityStatus());
+
+		// Set date fields
+		newProperty.setDateAdded(Objects.nonNull(createRequest.getDateAdded()) ? createRequest.getDateAdded() : LocalDateTime.now());
+		newProperty.setLeaseEndDate(createRequest.getLeaseEndDate());
+		newProperty.setRentalEndDate(createRequest.getRentalEndDate());
+
+		// Initialize all status tracking fields as null (property starts clean)
+		clearStatusFields(newProperty);
+
+		// Save new property
+		Property savedProperty = propertyRepository.save(newProperty);
+		log.info("Property created successfully with id: {}", savedProperty.getId());
+
+		// Return property details
+		return modelMapper.map(savedProperty, PropertyDetailRespDto.class);
 	}
 
 }
