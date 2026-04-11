@@ -1,0 +1,41 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: ${MYSQL_URL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    name: ${MYSQL_DB_NAME:property_db}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: Asia/Kolkata
+    database: mysql
+
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+
+aws:
+  s3:
+    bucket_name: ${S3_BUCKET_NAME}
+    region: ${AWS_REGION:ap-south-1}
+
+# JWT Configuration
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-seconds: ${JWT_EXPIRATION_SECONDS:3600}
+    token-prefix: ${JWT_TOKEN_PREFIX:"Bearer "}
+    header-string: ${JWT_HEADER_STRING:Authorization}
+    enable-token-blacklist: ${JWT_ENABLE_TOKEN_BLACKLIST:false}
+    refresh-token-expiration-seconds: ${JWT_REFRESH_TOKEN_EXPIRATION_SECONDS:84600}
