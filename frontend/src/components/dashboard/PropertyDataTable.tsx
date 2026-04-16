@@ -9,8 +9,6 @@ interface PropertyDataTableProps {
   data: PropertyDetails[]
   isLoading?: boolean
   onSort?: (field: string) => void
-  sortBy?: string
-  sortDirection?: 'ASC' | 'DESC'
   getSortIcon?: (field: string) => React.ReactElement | null
 }
 
@@ -18,8 +16,6 @@ export default function PropertyDataTable({
   data, 
   isLoading, 
   onSort,
-  sortBy,
-  sortDirection,
   getSortIcon
 }: PropertyDataTableProps) {
   const navigate = useNavigate()

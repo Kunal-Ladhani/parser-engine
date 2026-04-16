@@ -24,7 +24,7 @@ export class PropertyApiService {
   ): Promise<PropertySearchResponse | null> {
     try {
       // Build query parameters
-      const params: Record<string, any> = {
+      const params: Record<string, string | number | undefined> = {
         page,
         size,
         ...filters,

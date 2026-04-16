@@ -5,24 +5,23 @@ import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ChevronUp, ChevronDown, Search, Filter, X } from "lucide-react"
+import { ChevronUp, ChevronDown, Search, X } from "lucide-react"
 import PropertyDataTable from "./PropertyDataTable"
 import { Pagination } from "./Pagination"
 import PropertyApiService from "@/services/propertyApiService"
-import type { PropertySearchFilter, PropertyDetails, PropertySearchResponse } from "@/types/property"
+import type { PropertySearchFilter, PropertyDetails } from "@/types/property"
 
 export function PropertySearchDashboard() {
   const [filters, setFilters] = useState<PropertySearchFilter>({})
   const [currentPage, setCurrentPage] = useState(0) // Spring Boot uses 0-based pagination
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize] = useState(10)
   const [isLoading, setIsLoading] = useState(false)
   const [properties, setProperties] = useState<PropertyDetails[]>([])
   const [totalPages, setTotalPages] = useState(0)
   const [totalElements, setTotalElements] = useState(0)
   const [sortBy, setSortBy] = useState<string>("id,asc");
-  const [sortDirection, setSortDirection] = useState<'ASC' | 'DESC'>('ASC')
   const [error, setError] = useState<string | null>(null)
 
   // Auto-clear error messages after 5 seconds
@@ -39,6 +38,7 @@ export function PropertySearchDashboard() {
   // Load initial data
   useEffect(() => {
     searchProperties()
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- initial load only
   }, [])
 
   const searchProperties = async (newFilters?: PropertySearchFilter, newPage?: number, newSort?: string) => {
@@ -328,8 +328,6 @@ export function PropertySearchDashboard() {
           data={properties} 
           isLoading={isLoading}
           onSort={handleSort}
-          sortBy={sortBy}
-          sortDirection={sortDirection}
           getSortIcon={getSortIcon}
         />
       </div>

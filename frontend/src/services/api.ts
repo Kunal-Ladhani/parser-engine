@@ -173,6 +173,14 @@ function processResponse<T>(response: AxiosResponse): ApiResponse<T> {
 /**
  * Process Axios error and extract meaningful error messages
  */
+function messageFromErrorBody(data: unknown): string | null {
+  if (!data || typeof data !== "object") return null;
+  const body = data as Record<string, unknown>;
+  const pick = (key: string) =>
+    typeof body[key] === "string" ? (body[key] as string) : null;
+  return pick("message") || pick("errorMessage") || pick("error");
+}
+
 function processError<T>(error: AxiosError): ApiResponse<T> {
   let errorMsg = "Unknown error";
   let status = 0;
@@ -184,9 +192,7 @@ function processError<T>(error: AxiosError): ApiResponse<T> {
       errorMsg = error.response.data;
     } else if (error.response.data && typeof error.response.data === "object") {
       errorMsg =
-        (error.response.data as any).message ||
-        (error.response.data as any).errorMessage ||
-        (error.response.data as any).error ||
+        messageFromErrorBody(error.response.data) ||
         JSON.stringify(error.response.data);
     }
   } else if (error.message) {
@@ -220,7 +226,7 @@ export async function get<T>(
  */
 export async function post<T>(
   endpoint: string,
-  data?: any,
+  data?: unknown,
   config: AxiosRequestConfig = {}
 ): Promise<ApiResponse<T>> {
   try {
@@ -236,7 +242,7 @@ export async function post<T>(
  */
 export async function put<T>(
   endpoint: string,
-  data?: any,
+  data?: unknown,
   config: AxiosRequestConfig = {}
 ): Promise<ApiResponse<T>> {
   try {
@@ -267,7 +273,7 @@ export async function del<T>(
  */
 export async function patch<T>(
   endpoint: string,
-  data?: any,
+  data?: unknown,
   config: AxiosRequestConfig = {}
 ): Promise<ApiResponse<T>> {
   try {
@@ -284,7 +290,7 @@ export async function patch<T>(
 export async function uploadFile<T>(
   endpoint: string,
   file: File,
-  additionalData?: Record<string, any>,
+  additionalData?: Record<string, string | number | boolean>,
   config: AxiosRequestConfig = {}
 ): Promise<ApiResponse<T>> {
   try {

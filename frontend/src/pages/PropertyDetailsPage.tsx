@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -77,43 +77,7 @@ export default function PropertyDetailsPage() {
     rentedForAmount: 0
   })
 
-  useEffect(() => {
-    if (id) {
-      fetchProperty(id)
-    }
-  }, [id])
-
-  // Auto-clear success and error messages after 5 seconds
-  useEffect(() => {
-    if (success || error) {
-      const timer = setTimeout(() => {
-        setSuccess(null)
-        setError(null)
-      }, 5000)
-      
-      return () => clearTimeout(timer)
-    }
-  }, [success, error])
-
-  const fetchProperty = async (propertyId: string) => {
-    setIsLoading(true)
-    setError(null)
-    try {
-      const data = await PropertyApiService.getPropertyById(propertyId)
-      if (data) {
-        setProperty(data)
-        updateFormDataFromProperty(data)
-      } else {
-        setError("Property not found.")
-      }
-    } catch (err) {
-      setError("Failed to load property details.")
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const updateFormDataFromProperty = (updatedProperty: PropertyDetails) => {
+  const updateFormDataFromProperty = useCallback((updatedProperty: PropertyDetails) => {
     setFormData({
       buildingName: updatedProperty.buildingName || "",
       location: updatedProperty.location || "",
@@ -132,7 +96,43 @@ export default function PropertyDetailsPage() {
       leaseEndDate: updatedProperty.leaseEndDate ? updatedProperty.leaseEndDate.split('T')[0] : "",
       rentalEndDate: updatedProperty.rentalEndDate ? updatedProperty.rentalEndDate.split('T')[0] : ""
     })
-  }
+  }, [])
+
+  const fetchProperty = useCallback(async (propertyId: string) => {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const data = await PropertyApiService.getPropertyById(propertyId)
+      if (data) {
+        setProperty(data)
+        updateFormDataFromProperty(data)
+      } else {
+        setError("Property not found.")
+      }
+    } catch {
+      setError("Failed to load property details.")
+    } finally {
+      setIsLoading(false)
+    }
+  }, [updateFormDataFromProperty])
+
+  useEffect(() => {
+    if (id) {
+      void fetchProperty(id)
+    }
+  }, [id, fetchProperty])
+
+  // Auto-clear success and error messages after 5 seconds
+  useEffect(() => {
+    if (success || error) {
+      const timer = setTimeout(() => {
+        setSuccess(null)
+        setError(null)
+      }, 5000)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [success, error])
 
   const handleInputChange = (field: keyof PropertyFormData, value: string | number) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -284,18 +284,23 @@ export default function PropertyDetailsPage() {
     return `₹${actualPrice.toLocaleString('en-IN')}/month`
   }
 
-  const formatDisplayValue = (value: any, field: string) => {
+  const formatDisplayValue = (value: unknown, field: string): string => {
     if (value === undefined || value === null || value === "") return "-"
-    
+
     switch (field) {
       case "quotedAmount":
         return formatPrice(value as number)
       case "furnishingStatus":
-        return FurnishingStatusLabels[value as FurnishingStatus] || value
+        return (
+          FurnishingStatusLabels[value as FurnishingStatus] ?? String(value)
+        )
       case "listingType":
-        return ListingTypeLabels[value as ListingType] || value
+        return ListingTypeLabels[value as ListingType] ?? String(value)
       case "availabilityStatus":
-        return AvailabilityStatusLabels[value as AvailabilityStatus] || value
+        return (
+          AvailabilityStatusLabels[value as AvailabilityStatus] ??
+          String(value)
+        )
       case "area":
         return `${value} sq ft`
       default:

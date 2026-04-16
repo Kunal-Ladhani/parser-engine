@@ -1,9 +1,5 @@
 import { get, patch, post, ApiResponse } from "./api";
-import {
-  API_CONFIG,
-  type FileListParams,
-  type ApiPageResponse,
-} from "@/config/api";
+import { API_CONFIG, type FileListParams, type ApiPageResponse } from "@/config/api";
 
 // Types for API responses
 export type FileItem = {
@@ -21,6 +17,12 @@ export type FileItem = {
   awsKey?: string;
   etag?: string;
   bucketName?: string;
+};
+
+/** Spring page shape plus optional legacy fields from the API */
+type FileListPayload = Partial<ApiPageResponse<FileItem>> & {
+  data?: FileItem[];
+  total?: number;
 };
 
 export type FilesResponse = {
@@ -84,7 +86,7 @@ export class FileApiService {
     const endpoint = `${this.baseEndpoint}?${queryParams.toString()}`;
 
     try {
-      const response: ApiResponse<any> = await get(endpoint);
+      const response: ApiResponse<FileListPayload> = await get(endpoint);
 
       if (response.error) {
         throw new Error(response.error);
@@ -93,6 +95,9 @@ export class FileApiService {
       // Transform the response to match our expected format
       // Assuming the backend returns a Spring Boot Page object
       const data = response.data;
+      if (!data) {
+        throw new Error("No data in files list response");
+      }
 
       return {
         data: data.content || data.data || [],
@@ -130,7 +135,7 @@ export class FileApiService {
   // Soft delete a file
   async deleteFile(fileId: string): Promise<boolean> {
     try {
-      const response: ApiResponse<any> = await patch(
+      const response: ApiResponse<unknown> = await patch(
         API_CONFIG.FILES.DELETE(fileId)
       );
 
@@ -171,7 +176,7 @@ export class FileApiService {
   // Reprocess a file
   async reprocessFile(fileId: string): Promise<boolean> {
     try {
-      const response: ApiResponse<any> = await post(
+      const response: ApiResponse<unknown> = await post(
         API_CONFIG.FILES.PROCESS(fileId)
       );
 

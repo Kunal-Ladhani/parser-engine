@@ -32,6 +32,9 @@ spring:
       hibernate:
         jdbc:
           time_zone: Asia/Kolkata
+  docker:
+    compose:
+      enabled: false
 
 springdoc:
   api-docs:

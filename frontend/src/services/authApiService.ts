@@ -1,3 +1,4 @@
+import { isAxiosError } from "axios";
 import { post } from "./api";
 import { jwtDecode } from "jwt-decode";
 
@@ -39,6 +40,15 @@ export type LoginRequest = {
 };
 
 export type LoginResponse = SignupResponse; // Same structure
+
+export type JwtDerivedUser = {
+  userId?: string;
+  username: string;
+  email: string;
+  role: string;
+  firstName?: string;
+  lastName?: string;
+};
 
 export type LogoutResponse = {
   message: string;
@@ -85,7 +95,7 @@ export class AuthApiService {
   private static extractUserDataFromToken(
     token: string,
     signupData?: SignupRequest
-  ): any {
+  ): JwtDerivedUser | null {
     const payload = this.decodeToken(token);
     if (!payload) {
       console.warn(
@@ -146,23 +156,24 @@ export class AuthApiService {
 
       console.log("[AUTH] User signed up successfully");
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[AUTH] Signup failed:", error);
 
-      // For signup errors, extract the actual backend error message
-      if (error.response) {
-        const errorData = error.response.data;
+      if (isAxiosError(error)) {
+        const errorData = error.response?.data;
         if (errorData && typeof errorData === "object") {
+          const data = errorData as Record<string, unknown>;
           const backendError =
-            errorData.errorMessage || errorData.message || errorData.error;
+            (typeof data.errorMessage === "string" && data.errorMessage) ||
+            (typeof data.message === "string" && data.message) ||
+            (typeof data.error === "string" && data.error);
           if (backendError) {
             throw new Error(backendError);
           }
         }
       }
 
-      // For other errors, use the original error message
-      throw error;
+      throw error instanceof Error ? error : new Error(String(error));
     }
   }
 
@@ -192,27 +203,27 @@ export class AuthApiService {
 
       console.log("[AUTH] User logged in successfully");
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[AUTH] Login failed:", error);
 
-      // For login errors, extract the actual backend error message
-      if (error.response && error.response.status === 401) {
+      if (isAxiosError(error) && error.response?.status === 401) {
         const errorData = error.response.data;
         if (errorData && typeof errorData === "object") {
+          const data = errorData as Record<string, unknown>;
           const backendError =
-            errorData.errorMessage || errorData.message || errorData.error;
+            (typeof data.errorMessage === "string" && data.errorMessage) ||
+            (typeof data.message === "string" && data.message) ||
+            (typeof data.error === "string" && data.error);
           if (backendError) {
             throw new Error(backendError);
           }
         }
-        // Fallback for 401 on login
         throw new Error(
           "Invalid credentials. Please check your email/username and password."
         );
       }
 
-      // For other errors, use the original error message
-      throw error;
+      throw error instanceof Error ? error : new Error(String(error));
     }
   }
 
@@ -225,7 +236,6 @@ export class AuthApiService {
     existingUserData?: {
       firstName?: string;
       lastName?: string;
-      [key: string]: any;
     } | null
   ): void {
     // Extract user data from JWT token

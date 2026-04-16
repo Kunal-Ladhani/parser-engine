@@ -136,7 +136,7 @@ export default function SignupPage() {
             };
 
             // Call the real signup API
-            const response = await AuthApiService.signup(signupData);
+            await AuthApiService.signup(signupData);
 
             // Navigate to dashboard after successful signup
             navigate("/dashboard")

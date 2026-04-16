@@ -52,7 +52,7 @@ export default function LoginPage() {
                 ...(isEmail ? { email: emailOrUsername } : { username: emailOrUsername })
             };
             
-            const response = await AuthApiService.login(loginData);
+            await AuthApiService.login(loginData);
 
             // Navigate to dashboard after successful login
             navigate("/dashboard")

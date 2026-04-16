@@ -15,7 +15,6 @@ interface FilesTableProps {
   processingIds?: string[]
   userRole?: string
   onSort?: (field: string) => void
-  sortBy?: string
   getSortIcon?: (field: string) => React.ReactElement | null
 }
 
@@ -28,7 +27,6 @@ export function FilesTable({
   processingIds = [],
   userRole = "USER",
   onSort,
-  sortBy,
   getSortIcon
 }: FilesTableProps) {
   if (isLoading) {

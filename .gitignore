@@ -1,34 +1,36 @@
-# macOS / OS cruft
+# macOS / Windows
 .DS_Store
 **/.DS_Store
+Thumbs.db
 
-# IntelliJ / VSCode
+# Editors / IDEs
 .idea/
 .vscode/
 *.iml
+*.swp
+*.swo
 
 # Java / Maven
 **/target/
 **/.mvn/wrapper/maven-wrapper.jar
 
-# Node / Vite
+# Node (frontend and any future packages)
 **/node_modules/
 **/dist/
 **/.eslintcache
 **/*.tsbuildinfo
 
-# Local env files
+# Local env and secrets (keep *.example tracked)
 .env
 .env.*
 !.env.example
-frontend/.env.local
-backend/.env
+!**/.env.example
 
-# Vercel local metadata (never commit)
-frontend/.vercel/
-
-# Logs
+# Logs and temp
 **/*.log
 logs/
+*.tmp
 
-.target/
+# Coverage / test output
+coverage/
+*.lcov

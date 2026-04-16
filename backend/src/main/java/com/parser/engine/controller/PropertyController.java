@@ -7,6 +7,7 @@ import com.parser.engine.dto.request.PropertyStatusUpdateReqDto;
 import com.parser.engine.dto.response.PropertyDetailRespDto;
 import com.parser.engine.dto.response.PropertySearchRespDto;
 import com.parser.engine.service.PropertyService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,17 +18,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/wb/v1/properties")
 @RestController
 public class PropertyController {
 
 	private final PropertyService propertyService;
-
-	@Autowired
-	public PropertyController(PropertyService propertyService) {
-		this.propertyService = propertyService;
-	}
 
 	@PostMapping
 	public ResponseEntity<PropertyDetailRespDto> createProperty(@RequestBody PropertyCreateReqDto propertyCreateReqDto) {

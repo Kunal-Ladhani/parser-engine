@@ -4,6 +4,7 @@ import com.parser.engine.dto.filter.FileSearchFilterDto;
 import com.parser.engine.dto.response.FileDetailsRespDto;
 import com.parser.engine.enums.FileProcessingStatus;
 import com.parser.engine.service.FileService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,17 +15,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Slf4j
 @RestController
 @RequestMapping("/wb/v1/files")
 public class FileController {
 
 	private final FileService fileService;
-
-	@Autowired
-	public FileController(FileService fileService) {
-		this.fileService = fileService;
-	}
 
 	@GetMapping
 	public ResponseEntity<Page<FileDetailsRespDto>> searchFiles(

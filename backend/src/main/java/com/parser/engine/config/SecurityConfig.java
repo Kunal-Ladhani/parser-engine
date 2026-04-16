@@ -47,8 +47,7 @@ public class SecurityConfig {
 
 	private static final List<String> ALLOWED_ORIGIN = List.of(
 			"http://localhost:5173",
-			"https://parser-engine-dashboard.xyz",
-			"https://parser-engine-dashboard.vercel.app"
+			"https://parser-engine-dashboard.xyz"
 	);
 
 	private static final List<String> ALLOWED_METHODS = List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD");

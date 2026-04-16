@@ -4,11 +4,11 @@ import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter, RefreshCw, ChevronUp, ChevronDown } from "lucide-react"
+import { Search, RefreshCw, ChevronUp, ChevronDown } from "lucide-react"
 import { FilesTable } from "./FilesTable"
 import { fileApiService, type FileItem, type FilesQueryParams } from "@/services/fileApiService"
 
@@ -66,6 +66,7 @@ export function FilesDashboard() {
       loadFilterOptions()
       hasLoaded.current = true
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- bootstrap once on mount
   }, [])
 
   // Load files when pagination changes (but not on initial mount)
@@ -73,6 +74,7 @@ export function FilesDashboard() {
     if (hasLoaded.current && currentPage > 1) {
       loadFiles()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- pagination only; avoids double fetch on mount
   }, [currentPage])
 
   const loadFilterOptions = async () => {
@@ -163,10 +165,12 @@ export function FilesDashboard() {
       } else {
         setError("Failed to delete file. Please try again.")
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Delete error:", err)
-      // Show specific backend error message if available
-      const errorMessage = err?.message || err?.response?.data?.errorMessage || "Failed to delete file. Please try again."
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to delete file. Please try again."
       setError(errorMessage)
     }
   }
@@ -180,10 +184,12 @@ export function FilesDashboard() {
       } else {
         setError("Failed to start reprocessing. Please try again.")
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Reprocess error:", err)
-      // Show specific backend error message if available
-      const errorMessage = err?.message || err?.response?.data?.errorMessage || "Failed to start reprocessing. Please try again."
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to start reprocessing. Please try again."
       setError(errorMessage)
     }
   }
@@ -199,10 +205,12 @@ export function FilesDashboard() {
       } else {
         setError("Failed to start processing. Please try again.")
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Process error:", err)
-      // Show specific backend error message if available
-      const errorMessage = err?.message || err?.response?.data?.errorMessage || "Failed to start processing. Please try again."
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to start processing. Please try again."
       setError(errorMessage)
     }
     finally {
@@ -399,7 +407,6 @@ export function FilesDashboard() {
             onProcess={handleProcess}
             userRole={userRole}
             onSort={handleSort}
-            sortBy={sortBy}
             getSortIcon={getSortIcon}
           />
 
