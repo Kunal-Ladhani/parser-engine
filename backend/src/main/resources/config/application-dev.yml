@@ -1,0 +1,46 @@
+spring:
+  devtools:
+    add-properties: false
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://127.0.0.1:3306/property_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Kolkata}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:password}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: Asia/Kolkata
+    database: mysql
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+    log-request-details: true
+  docker:
+    compose:
+      file: docker-compose.yml
+      enabled: false
+
+aws:
+  s3:
+    region: ${AWS_REGION:ap-south-1}
+    bucket_name: ${S3_BUCKET_NAME:parser-engine-bucket}
+    access_key: ${AWS_ACCESS_KEY_ID:test}
+    secret_key: ${AWS_SECRET_ACCESS_KEY:test}
+
+# JWT Configuration
+app:
+  jwt:
+    secret: ${JWT_SECRET:dev-only-change-me}
+    expiration-seconds: 900 # 15 minutes (short-lived access token)
+    token-prefix: "Bearer "
+    header-string: "Authorization"
+    enable-token-blacklist: false
+    refresh-token-expiration-seconds: 259200 # 3 days

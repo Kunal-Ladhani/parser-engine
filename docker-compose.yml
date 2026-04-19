@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   mysql:
@@ -14,4 +14,5 @@ services:
       - mysql_data:/var/lib/mysql
 
 volumes:
-  mysql_data: 
+  mysql_data:
+
